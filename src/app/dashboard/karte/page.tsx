@@ -1,6 +1,33 @@
+'use client'
+
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import Link from 'next/link'
 
 export default function KartePage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (status === 'loading') return
+    if (!session) {
+      router.push('/login')
+    }
+  }, [session, status, router])
+
+  if (status === 'loading') {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
+        <div className="text-zinc-600 dark:text-zinc-400">読み込み中...</div>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return null
+  }
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black">
       <header className="border-b border-zinc-200 bg-white px-6 py-4 dark:border-zinc-800 dark:bg-zinc-900">

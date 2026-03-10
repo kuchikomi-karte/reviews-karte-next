@@ -1,12 +1,24 @@
 'use client'
 
 import { useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import Link from 'next/link'
 
 export default function ReviewsPage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [review, setReview] = useState('')
   const [response, setResponse] = useState('')
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (status === 'loading') return
+    if (!session) {
+      router.push('/login')
+    }
+  }, [session, status, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -16,26 +28,39 @@ export default function ReviewsPage() {
     setResponse('')
 
     try {
-      const res: Response = await fetch('/api/reviews', {
+      const res = await fetch('/api/reviews', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          review
+          review,
+          userId: session?.user?.id
         })
       })
 
       if (!res.ok) throw new Error('エラーが発生しました')
 
-      const responseData = await res.json()
-      setResponse(responseData.response)
+      const data = await res.json()
+      setResponse(data.response)
     } catch (error) {
       console.error('Error:', error)
       alert('エラーが発生しました。もう一度お試しください。')
     } finally {
       setLoading(false)
     }
+  }
+
+  if (status === 'loading') {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
+        <div className="text-zinc-600 dark:text-zinc-400">読み込み中...</div>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return null
   }
 
   return (
