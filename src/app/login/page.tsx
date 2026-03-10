@@ -1,105 +1,71 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 
 export default function LoginPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const supabase = createClientComponentClient()
+  const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleLogin = async () => {
+    if (!email || !password) { setError('メールアドレスとパスワードを入力してください'); return }
     setError('')
     setLoading(true)
-
-    try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false
-      })
-
-      if (result?.error) {
-        setError('メールアドレスまたはパスワードが正しくありません。')
-      } else {
-        router.push('/dashboard')
-        router.refresh()
-      }
-    } catch (error) {
-      setError('エラーが発生しました。もう一度お試しください。')
-    } finally {
-      setLoading(false)
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) {
+      setError('メールアドレスまたはパスワードが正しくありません')
+    } else {
+      router.push('/dashboard')
+      router.refresh()
     }
+    setLoading(false)
+  }
+
+  const handleGoogleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback` },
+    })
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 dark:bg-black">
-      <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
-            ログイン
-          </h1>
-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-            口コミ経営カルテにログインしてください
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <div className="rounded-md bg-red-50 p-4 text-sm text-red-800 dark:bg-red-900/20 dark:text-red-400">
-              {error}
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              メールアドレス
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="block w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
-              placeholder="your@email.com"
-            />
+    <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', fontFamily: 'Noto Sans JP, sans-serif' }}>
+      <div style={{ textAlign: 'center', marginBottom: '56px' }}>
+        <p style={{ fontSize: '10px', letterSpacing: '0.35em', color: '#888888', marginBottom: '12px' }}>ai×me lab</p>
+        <h1 style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '22px', fontWeight: 400, letterSpacing: '0.2em', color: '#0a0a0a', margin: '0 0 12px 0' }}>口コミ経営カルテ</h1>
+        <div style={{ width: '32px', height: '1px', backgroundColor: '#c9a84c', margin: '0 auto 12px' }} />
+        <p style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#888888' }}>監修｜黒川聖羅</p>
+      </div>
+      <div style={{ width: '100%', maxWidth: '380px' }}>
+        {error && (
+          <div style={{ padding: '12px 16px', backgroundColor: '#fff5f5', border: '1px solid #ffdddd', marginBottom: '20px', fontSize: '12px', color: '#cc3333', letterSpacing: '0.05em' }}>
+            {error}
           </div>
-
-          <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              パスワード
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="block w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
-              placeholder="•••••••••"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-md bg-zinc-900 px-4 py-2 text-white shadow-sm hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {loading ? 'ログイン中...' : 'ログイン'}
-          </button>
-        </form>
-
-        <div className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          <Link href="/api/checkout" className="font-medium text-zinc-900 hover:text-zinc-700 dark:text-zinc-50 dark:hover:text-zinc-300">
-            料金プランを確認する
-          </Link>
+        )}
+        <button onClick={handleGoogleLogin} style={{ width: '100%', padding: '15px', backgroundColor: '#0a0a0a', color: '#f5f0e8', border: 'none', fontSize: '13px', letterSpacing: '0.12em', cursor: 'pointer', marginBottom: '28px', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 500 }}>
+          Googleアカウントで登録・ログイン
+        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '28px' }}>
+          <div style={{ flex: 1, height: '1px', backgroundColor: '#cccccc' }} />
+          <span style={{ fontSize: '10px', color: '#888888', letterSpacing: '0.15em' }}>または</span>
+          <div style={{ flex: 1, height: '1px', backgroundColor: '#cccccc' }} />
         </div>
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px' }}>メールアドレス</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" style={{ width: '100%', padding: '13px 16px', border: '1px solid #cccccc', backgroundColor: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Noto Sans JP, sans-serif', color: '#0a0a0a' }} />
+        </div>
+        <div style={{ marginBottom: '32px' }}>
+          <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px' }}>パスワード</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={(e) => e.key === 'Enter' && handleLogin()} style={{ width: '100%', padding: '13px 16px', border: '1px solid #cccccc', backgroundColor: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Noto Sans JP, sans-serif', color: '#0a0a0a' }} />
+        </div>
+        <button onClick={handleLogin} disabled={loading} style={{ width: '100%', padding: '15px', backgroundColor: loading ? '#cccccc' : '#c9a84c', color: '#0a0a0a', border: 'none', fontSize: '13px', letterSpacing: '0.12em', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 500 }}>
+          {loading ? 'ログイン中...' : 'ログイン'}
+        </button>
       </div>
     </div>
   )
