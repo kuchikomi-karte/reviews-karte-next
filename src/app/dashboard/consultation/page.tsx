@@ -14,7 +14,8 @@ interface Message {
 }
 
 export default function ConsultationPage() {
-  const { data: session, status } = useSession()
+  const session = useSession()
+  const { data, status } = session
   const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
