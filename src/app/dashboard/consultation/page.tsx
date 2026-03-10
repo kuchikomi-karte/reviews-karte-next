@@ -23,135 +23,140 @@ export default function ConsultationPage() {
 
   useEffect(() => {
     if (status === 'loading') return
-    if (!session) {
+    if (status === 'unauthenticated') {
       router.push('/login')
     }
-  }, [session, status, router])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!input.trim() || loading) return
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      sender: 'user',
-      content: input,
-      created_at: new Date().toISOString()
-    }
-
-    setMessages([...messages, userMessage])
-    setInput('')
-    setLoading(true)
-
-    try {
-      const response = await fetch('/api/consultation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: input,
-          userId: session?.user?.id
-        })
-      })
-
-      if (!response.ok) throw new Error('エラーが発生しました')
-
-      const data = await response.json()
-
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        sender: 'assistant',
-        content: data.response,
-        created_at: new Date().toISOString()
-      }
-
-      setMessages(prev => [...prev, assistantMessage])
-    } catch (error) {
-      console.error('Error:', error)
-      alert('エラーが発生しました。もう一度お試しください。')
-    } finally {
-      setLoading(false)
-    }
-  }
+  }, [status, router])
 
   if (status === 'loading') {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-        <div className="text-zinc-600 dark:text-zinc-400">読み込み中...</div>
+      <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fafafa' }}>
+        <div style={{ color: '#737372', fontSize: '13px' }}>読み込み中...</div>
       </div>
     )
   }
 
-  if (!session) {
+  if (status === 'unauthenticated') {
     return null
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black">
-      <header className="border-b border-zinc-200 bg-white px-6 py-4 dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mx-auto flex max-w-4xl items-center justify-between">
-          <Link href="/dashboard" className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50">
-            ← ダッシュボードに戻る
-          </Link>
-          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
-            問い合わせ・相談
+    <div style={{ minHeight: '100vh', backgroundColor: '#fafafa' }}>
+      <header style={{ borderBottom: '1px solid #e5e5e5', backgroundColor: '#ffffff', padding: '1rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{ fontSize: '11px', letterSpacing: '0.25em', color: '#737372' }}>ai×me lab</span>
+          <h1 style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '1.25rem', fontWeight: 500, letterSpacing: '0.05em', color: '#1a1a1a', margin: 0 }}>
+            口コミ経営カルテ
           </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '12px', color: '#6b726b' }}>{data?.user?.email || ''}</span>
+            <button
+              onClick={() => router.push('/login')}
+              style={{
+                fontSize: '12px',
+                color: '#6b726b',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                letterSpacing: '0.05em',
+                fontFamily: 'Noto Sans JP, sans-serif'
+              }}
+            >
+              ログアウト
+            </button>
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-6 py-8">
-        <div className="space-y-4">
-          {messages.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-zinc-300 bg-zinc-50 p-8 text-center dark:border-zinc-700 dark:bg-zinc-900">
-              <p className="text-zinc-600 dark:text-zinc-400">
-                黒川聖羅に経営に関する相談をしましょう
-              </p>
-            </div>
-          ) : (
-            messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.sender === 'user' ? 'justify-end' : 'justify-start'
-                }`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                    message.sender === 'user'
-                      ? 'bg-zinc-900 text-zinc-50'
-                      : 'bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-50'
-                  }`}
-                >
-                  <div className="mb-1 text-sm font-medium">
-                    {message.sender === 'user' ? 'あなた' : '黒川聖羅'}
-                  </div>
-                  <p className="whitespace-pre-wrap">{message.content}</p>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+      <main style={{ maxWidth: '56rem', margin: '0 auto', padding: '2rem 1rem' }}>
+        <h1 style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '2rem', fontWeight: 400, letterSpacing: '0.1em', color: '#1a1a1a', marginBottom: '2rem' }}>
+          経営相談
+        </h1>
 
-        <form onSubmit={handleSubmit} className="mt-8">
-          <div className="flex gap-4">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="相談内容を入力してください..."
-              className="flex-1 rounded-md border border-zinc-300 bg-white px-4 py-3 text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
-              rows={3}
-            />
-            <button
-              type="submit"
-              disabled={loading || !input.trim()}
-              className="rounded-md bg-zinc-900 px-6 py-3 text-white shadow-sm hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {loading ? '送信中...' : '送信'}
-            </button>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '0.5rem', border: '1px solid #e5e5e5', padding: '1.5rem', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div style={{ fontSize: '14px', color: '#1a1a1a', marginBottom: '0.5rem' }}>
+              黒川聖羅に経営に関する相談をしましょう
+            </div>
+
+            <div style={{ fontSize: '13px', color: '#6b726b', marginBottom: '1.5rem', lineHeight: '1.7' }}>
+              メッセージを送信すると、AIが分析して返信します。<br />
+              回答は通常5〜10分程度で表示されます。
+            </div>
+
+            <div style={{ backgroundColor: '#f9f9f5', borderRadius: '0.375rem', padding: '1rem', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="相談したいことを入力してください..."
+                  style={{
+                    width: '100%',
+                    minHeight: '120px',
+                    padding: '0.75rem',
+                    borderRadius: '0.25rem',
+                    border: '1px solid #d4d4d4',
+                    fontSize: '14px',
+                    fontFamily: 'Noto Sans JP, sans-serif',
+                    resize: 'vertical',
+                    color: '#1a1a1a',
+                    backgroundColor: '#fafafa'
+                  }}
+                />
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading || !input.trim()}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '0.25rem',
+                    border: 'none',
+                    backgroundColor: '#9a7b3f',
+                    color: '#ffffff',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    letterSpacing: '0.05em',
+                    fontFamily: 'Noto Sans JP, sans-serif'
+                  }}
+                >
+                  {loading ? '送信中...' : '送信'}
+                </button>
+              </div>
+            </div>
+
+            {messages.length > 0 && (
+              <div style={{ marginTop: '1.5rem', maxHeight: '400px', overflowY: 'auto' }}>
+                {messages.map((message) => (
+                  <div key={message.id} style={{
+                    backgroundColor: message.sender === 'user' ? '#f0f0f0' : '#ffffff',
+                    borderRadius: '0.375rem',
+                    padding: '0.75rem 1rem',
+                    marginBottom: '0.5rem',
+                    borderLeft: message.sender === 'user' ? '3px solid #9a7b3f' : 'none'
+                    marginLeft: message.sender === 'user' ? '0' : 'auto'
+                  }}>
+                    <div style={{ fontSize: '12px', fontWeight: 500, marginBottom: '0.25rem', color: '#1a1a1a' }}>
+                      {message.sender === 'user' ? 'あなた' : '黒川聖羅'}
+                    </div>
+                    <div style={{ fontSize: '13px', color: '#4b5563', lineHeight: '1.6' }}>
+                      {message.content}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div style={{ marginTop: '1rem', fontSize: '12px', color: '#6b726b' }}>
+              ※ 現在、返信はシミュレーションです。<br />
+              実際の運用では、LINE Botを通じてご相談ください。
+            </div>
           </div>
-        </form>
-      </main>
+        </main>
+
+      <footer style={{ textAlign: 'center', padding: '2rem', fontSize: '10px', color: '#6b726b', borderTop: '1px solid #e5e5e5' }}>
+        © ai×me lab / 監修｜黒川聖羅
+      </footer>
     </div>
   )
 }
