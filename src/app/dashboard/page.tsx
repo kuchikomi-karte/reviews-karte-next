@@ -54,6 +54,71 @@ export default function DashboardPage() {
           ダッシュボード
         </h2>
 
+        {/* 店舗情報カード */}
+        <div className="mb-6 rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50 mb-4">
+            登録済みの店舗情報
+          </h3>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-zinc-900 dark:text-zinc-50 min-w-[100px]">
+                美容室 NECESSARY
+              </span>
+              <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                業種: 美容室
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <a
+                href="https://search.google.com/local"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                🔍 Google口コミを開く
+              </a>
+              <span className="text-sm text-zinc-400">→</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <a
+                href="https://beauty.hotpepper.jp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                🔗 その他口コミサイトを開く
+              </a>
+              <span className="text-sm text-zinc-400">→</span>
+            </div>
+          </div>
+
+          {/* 黒川聖羅の明言テーブル */}
+          <div className="mt-6 pt-6 border-t border-zinc-200">
+            <div className="flex justify-end">
+              <table className="text-left border-collapse">
+                <tbody>
+                  <tr>
+                    <td className="py-3 px-4 align-top">
+                      <p className="text-base leading-relaxed text-zinc-900 dark:text-zinc-50 mb-2">
+                        口コミは、お客様からの経営レポート。<br />
+                        データを読まない経営者は、勘で戦っている。<br />
+                        返信の質が、店の格を決める。
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 px-4 text-right">
+                      <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                        ── 黒川 聖羅
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <Link
             href="/dashboard/consultation"
