@@ -1,94 +1,24 @@
 'use client'
 
-import { useSession, signOut } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 import Link from 'next/link'
 
 export default function DashboardPage() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (status === 'loading') return
-    if (!session) {
-      router.push('/login')
-    }
-  }, [session, status, router])
-
-  if (status === 'loading') {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-        <div className="text-zinc-600 dark:text-zinc-400">読み込み中...</div>
-      </div>
-    )
-  }
-
-  if (!session) {
-    return null
-  }
-
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black">
-      <header className="border-b border-zinc-200 bg-white px-6 py-4 dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-            口コミ経営カルテ
-          </h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-zinc-600 dark:text-zinc-400">
-              {session.user.email}
-            </span>
-            <button
-              onClick={() => signOut()}
-              className="rounded-md px-4 py-2 text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
-            >
-              ログアウト
-            </button>
-          </div>
-        </div>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8', padding: '48px' }}>
+      <header style={{ marginBottom: '48px' }}>
+        <h1 style={{ fontFamily: 'serif', fontSize: '24px', fontWeight: 400, letterSpacing: '0.1em' }}>
+          口コミ経営カルテ
+        </h1>
       </header>
-
-      <main className="mx-auto max-w-7xl px-6 py-8">
-        <h2 className="mb-8 text-3xl font-bold text-zinc-900 dark:text-zinc-50">
-          ダッシュボード
-        </h2>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <Link
-            href="/dashboard/consultation"
-            className="flex flex-col rounded-lg border border-zinc-200 bg-white p-6 shadow-sm transition-colors hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
-          >
-            <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-              問い合わせ・相談
-            </h3>
-            <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-              黒川聖羅に経営に関する相談をしましょう
-            </p>
+      <main>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', maxWidth: '600px' }}>
+          <Link href="/dashboard/reviews" style={{ padding: '24px', backgroundColor: 'white', border: '1px solid #ddd', textDecoration: 'none', color: '#000' }}>
+            <div style={{ fontSize: '20px', marginBottom: '8px' }}>🖊️</div>
+            <div style={{ fontFamily: 'serif', fontSize: '14px' }}>AI口コミ返信案</div>
           </Link>
-
-          <Link
-            href="/dashboard/reviews"
-            className="flex flex-col rounded-lg border border-zinc-200 bg-white p-6 shadow-sm transition-colors hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
-          >
-            <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-              口コミ返信案生成
-            </h3>
-            <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-              GoogleやHotPepperの口コミに返信案を生成
-            </p>
-          </Link>
-
-          <Link
-            href="/dashboard/karte"
-            className="flex flex-col rounded-lg border border-zinc-200 bg-white p-6 shadow-sm transition-colors hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
-          >
-            <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-              カルテ確認
-            </h3>
-            <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-              月次黒川診断レポートを確認
-            </p>
+          <Link href="/dashboard/consultation" style={{ padding: '24px', backgroundColor: 'white', border: '1px solid #ddd', textDecoration: 'none', color: '#000' }}>
+            <div style={{ fontSize: '20px', marginBottom: '8px' }}>💬</div>
+            <div style={{ fontFamily: 'serif', fontSize: '14px' }}>経営相談</div>
           </Link>
         </div>
       </main>
