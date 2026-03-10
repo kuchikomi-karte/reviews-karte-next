@@ -21,12 +21,38 @@ export default function ConsultationPage() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const handleSubmit = async () => {
+    if (!input.trim() || loading) return
+    setLoading(true)
+    setMessages(prev => [...prev, {
+      id: Date.now().toString(),
+      sender: 'user',
+      content: input,
+      created_at: new Date().toISOString(),
+    }])
+    setInput('')
+    setLoading(false)
+  }
+
   useEffect(() => {
     if (status === 'loading') return
     if (status === 'unauthenticated') {
       router.push('/login')
     }
   }, [status, router])
+
+  const handleSubmit = async () => {
+    if (!input.trim() || loading) return
+    setLoading(true)
+    setMessages(prev => [...prev, {
+      id: Date.now().toString(),
+      sender: 'user',
+      content: input,
+      created_at: new Date().toISOString(),
+    }])
+    setInput('')
+    setLoading(false)
+  }
 
   if (status === 'loading') {
     return (
