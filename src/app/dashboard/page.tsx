@@ -101,7 +101,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', maxWidth: '720px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', maxWidth: '900px' }}>
           <Link href="/dashboard/reviews" style={{ textDecoration: 'none' }}>
             <div style={{ padding: '32px', backgroundColor: 'white', border: '1px solid #ddd8ce', minHeight: '160px' }}>
               <div style={{ fontSize: '24px', marginBottom: '16px' }}>🖊️</div>
