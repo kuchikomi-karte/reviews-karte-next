@@ -48,7 +48,7 @@ export default function LoginPage() {
           </div>
         )}
         <button onClick={handleGoogleLogin} style={{ width: '100%', padding: '15px', backgroundColor: '#0a0a0a', color: '#f5f0e8', border: 'none', fontSize: '13px', letterSpacing: '0.12em', cursor: 'pointer', marginBottom: '28px', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 500 }}>
-          Googleアカウントで登録・ログイン
+          Googleアカウントでログイン
         </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '28px' }}>
           <div style={{ flex: 1, height: '1px', backgroundColor: '#cccccc' }} />

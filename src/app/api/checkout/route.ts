@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 
 export async function POST() {
+  // ビルド時のエラー回避：環境変数未設定時は早期リターン
+  if (!stripe || !process.env.STRIPE_PRICE_ID || !process.env.NEXTAUTH_URL) {
+    return NextResponse.json({ error: 'Configuration error' }, { status: 500 })
+  }
+
   try {
     // Stripe Checkoutセッションを作成
     const session = await stripe.checkout.sessions.create({
