@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd reviews-karte-next && npm run build",
+  "outputDirectory": "reviews-karte-next/.next",
+  "framework": "nextjs"
+}
