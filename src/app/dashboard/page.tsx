@@ -61,28 +61,8 @@ export default function DashboardPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', fontFamily: 'Noto Sans JP, sans-serif', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8', fontFamily: 'Noto Sans JP, sans-serif', position: 'relative', overflow: 'hidden' }}>
 
-      {/* 聖羅の背景画像（全画面） */}
-      <div style={{ position: 'fixed', top: 0, right: 0, width: '100%', height: '100%', zIndex: 0 }}>
-        <img
-          src="/images/seira.png"
-          alt=""
-          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }}
-        />
-        {/* 左側オーバーレイ：コンテンツを読みやすくする */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to right, rgba(245,240,232,0.97) 0%, rgba(245,240,232,0.92) 40%, rgba(245,240,232,0.4) 70%, transparent 100%)'
-        }} />
-        {/* 上下フェード */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(10,10,10,0.6) 0%, transparent 12%, transparent 85%, rgba(245,240,232,0.8) 100%)'
-        }} />
-      </div>
-
-      {/* ヘッダー */}
       <header style={{ position: 'relative', zIndex: 10, backgroundColor: '#0a0a0a', padding: '0 32px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <span style={{ fontSize: '10px', letterSpacing: '0.25em', color: '#888', fontWeight: 400 }}>ai×me lab</span>
@@ -96,8 +76,12 @@ export default function DashboardPage() {
         </nav>
       </header>
 
-      {/* 聖羅の名言（右下に配置） */}
-      <div style={{ position: 'fixed', bottom: 48, right: 28, width: '300px', zIndex: 5, pointerEvents: 'none', textAlign: 'right' }}>
+      <div style={{ position: 'absolute', top: 56, right: 0, width: '55%', height: '560px', zIndex: 1, overflow: 'hidden' }}>
+        <img src="/images/seira.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, #f5f0e8 0%, transparent 35%), linear-gradient(to bottom, #f5f0e8 0%, transparent 8%, transparent 92%, #f5f0e8 100%)' }} />
+      </div>
+
+      <div style={{ position: 'absolute', top: 480, right: 28, width: '300px', zIndex: 2, pointerEvents: 'none', textAlign: 'right' }}>
         <div style={{ width: '24px', height: '1px', backgroundColor: '#c9a84c', marginLeft: 'auto', marginBottom: '16px' }} />
         {QUOTES.map((q, i) => (
           <p key={i} style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '13px', lineHeight: 2, letterSpacing: '0.12em', color: '#0a0a0a', marginBottom: '12px', whiteSpace: 'pre-line' }}>
@@ -107,8 +91,7 @@ export default function DashboardPage() {
         <p style={{ fontSize: '10px', letterSpacing: '0.3em', color: '#c9a84c', marginTop: '16px' }}>黒川 聖羅</p>
       </div>
 
-      {/* メインコンテンツ（横幅全体を使う） */}
-      <div style={{ position: 'relative', zIndex: 3, padding: '48px 40px 80px' }}>
+      <div style={{ position: 'relative', zIndex: 3, padding: '48px 32px 80px', maxWidth: '720px' }}>
 
         <h1 style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '26px', fontWeight: 400, letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px' }}>
           {displayName}さんのカルテ
@@ -126,7 +109,7 @@ export default function DashboardPage() {
         </div>
 
         {!profile?.google_review_url ? (
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.85)', border: '1px solid #e8e0d0', padding: '32px', marginBottom: '32px', maxWidth: '520px' }}>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.85)', border: '1px solid #e8e0d0', padding: '32px', marginBottom: '32px', maxWidth: '600px' }}>
             <p style={{ fontSize: '15px', letterSpacing: '0.1em', color: '#0a0a0a', marginBottom: '8px', fontWeight: 500 }}>店舗情報が未登録です</p>
             <p style={{ fontSize: '12px', letterSpacing: '0.08em', color: '#666', marginBottom: '24px', lineHeight: 1.8 }}>口コミ分析を始めるために、店舗情報をご登録ください。</p>
             <Link href="/register/complete" style={{ display: 'inline-block', padding: '13px 28px', backgroundColor: '#c9a84c', color: '#0a0a0a', fontSize: '13px', letterSpacing: '0.12em', textDecoration: 'none', fontWeight: 500 }}>
@@ -134,7 +117,7 @@ export default function DashboardPage() {
             </Link>
           </div>
         ) : (
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.85)', border: '1px solid #e8e0d0', padding: '28px 32px', marginBottom: '32px', maxWidth: '520px' }}>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.85)', border: '1px solid #e8e0d0', padding: '28px 32px', marginBottom: '32px', maxWidth: '600px' }}>
             <p style={{ fontSize: '13px', letterSpacing: '0.12em', color: '#888', marginBottom: '4px' }}>登録店舗</p>
             <p style={{ fontSize: '18px', fontFamily: 'Noto Serif JP, serif', letterSpacing: '0.1em', color: '#0a0a0a', marginBottom: '12px' }}>{profile.salon_name || '未設定'}</p>
             {profile.business_type && (
@@ -143,16 +126,10 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* カードグリッド：横幅に合わせて自動調整 */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '16px',
-          maxWidth: '900px'
-        }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', maxWidth: '600px' }}>
 
           <Link href="/dashboard/reply" style={{ textDecoration: 'none' }}>
-            <div style={{ backgroundColor: 'rgba(255,255,255,0.9)', border: '1px solid #e8e0d0', padding: '28px 24px', cursor: 'pointer', height: '100%' }}>
+            <div style={{ backgroundColor: 'rgba(255,255,255,0.9)', border: '1px solid #e8e0d0', padding: '28px 24px', cursor: 'pointer' }}>
               <div style={{ fontSize: '24px', marginBottom: '12px' }}>🖊</div>
               <p style={{ fontSize: '14px', letterSpacing: '0.1em', color: '#0a0a0a', fontWeight: 500, marginBottom: '8px' }}>AI口コミ返信案</p>
               <p style={{ fontSize: '12px', color: '#666', letterSpacing: '0.05em', lineHeight: 1.7, marginBottom: '12px' }}>口コミの返信案をAIが自動で作成します。</p>
@@ -175,7 +152,7 @@ export default function DashboardPage() {
           </div>
 
           <Link href="/dashboard/consultation" style={{ textDecoration: 'none' }}>
-            <div style={{ backgroundColor: 'rgba(255,255,255,0.9)', border: '1px solid #e8e0d0', padding: '28px 24px', cursor: 'pointer', height: '100%' }}>
+            <div style={{ backgroundColor: 'rgba(255,255,255,0.9)', border: '1px solid #e8e0d0', padding: '28px 24px', cursor: 'pointer' }}>
               <div style={{ fontSize: '24px', marginBottom: '12px' }}>💬</div>
               <p style={{ fontSize: '14px', letterSpacing: '0.1em', color: '#0a0a0a', fontWeight: 500, marginBottom: '8px' }}>経営相談</p>
               <p style={{ fontSize: '12px', color: '#666', letterSpacing: '0.05em', lineHeight: 1.7, marginBottom: '12px' }}>黒川聖羅に経営の悩みを相談できます。</p>
