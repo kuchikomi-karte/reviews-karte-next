@@ -73,7 +73,7 @@ export default function DashboardPage() {
       </div>
 
       <main style={{ position: 'relative', zIndex: 1, padding: '48px', paddingRight: '480px' }}>
-        <div style={{ maxWidth: '560px', marginBottom: '40px' }}>
+        <div style={{ width: '100%', marginBottom: '40px' }}>
           <h1 style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '28px', fontWeight: 400, letterSpacing: '0.1em', color: '#0a0a0a', marginBottom: '16px' }}>{displayName}さんのカルテ</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
             <span style={{ padding: '6px 16px', border: '1px solid #0a0a0a', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', fontFamily: 'Noto Sans JP, sans-serif' }}>{isPremium ? 'プレミアムプラン' : 'フリープラン'}</span>
@@ -101,7 +101,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', maxWidth: '900px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', width: '100%' }}>
           <Link href="/dashboard/reviews" style={{ textDecoration: 'none' }}>
             <div style={{ padding: '32px', backgroundColor: 'white', border: '1px solid #ddd8ce', minHeight: '160px' }}>
               <div style={{ fontSize: '24px', marginBottom: '16px' }}>🖊️</div>
