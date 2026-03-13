@@ -72,7 +72,7 @@ export default function DashboardPage() {
         <p style={{ fontSize: '10px', letterSpacing: '0.25em', color: '#c9a84c', margin: 0 }}>── 黒川 聖羅</p>
       </div>
 
-      <main style={{ position: 'relative', zIndex: 1, padding: '48px', paddingRight: '480px' }}>
+      <main style={{ position: 'relative', zIndex: 1, padding: '48px', width: '100%' }}>
         <div style={{ width: '100%', marginBottom: '40px' }}>
           <h1 style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '28px', fontWeight: 400, letterSpacing: '0.1em', color: '#0a0a0a', marginBottom: '16px' }}>{displayName}さんのカルテ</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
