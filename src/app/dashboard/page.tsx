@@ -46,7 +46,7 @@ export default function DashboardPage() {
   const displayName = profile?.name || 'ゲスト'
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8', position: 'relative', overflow: 'hidden' }}>
+    <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: '#f5f0e8' }}>
       <header style={{ backgroundColor: '#0a0a0a', padding: '0 48px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <span style={{ fontSize: '10px', letterSpacing: '0.3em', color: '#888888', fontFamily: 'Noto Sans JP, sans-serif' }}>ai×me lab</span>
@@ -72,15 +72,15 @@ export default function DashboardPage() {
         <p style={{ fontSize: '10px', letterSpacing: '0.25em', color: '#c9a84c', margin: 0 }}>── 黒川 聖羅</p>
       </div>
 
-      <main style={{ position: 'relative', zIndex: 1, padding: '48px 460px 48px 48px', width: '100%', boxSizing: 'border-box' }}>
-        <div style={{ width: '100%', marginBottom: '40px' }}>
+      <main className="relative z-10 p-12 pr-[460px]">
+        <div className="mb-10">
           <h1 style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '28px', fontWeight: 400, letterSpacing: '0.1em', color: '#0a0a0a', marginBottom: '16px' }}>{displayName}さんのカルテ</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
             <span style={{ padding: '6px 16px', border: '1px solid #0a0a0a', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', fontFamily: 'Noto Sans JP, sans-serif' }}>{isPremium ? 'プレミアムプラン' : 'フリープラン'}</span>
             {!isPremium && <Link href="/premium" style={{ fontSize: '12px', color: '#c9a84c', letterSpacing: '0.1em', textDecoration: 'none', fontFamily: 'Noto Sans JP, sans-serif' }}>プレミアムプランへ →</Link>}
           </div>
           {hasSalonInfo ? (
-            <div style={{ padding: '24px 28px', backgroundColor: 'white', border: '1px solid #ddd8ce', width: '100%', boxSizing: 'border-box' }}>
+            <div className="p-6 bg-white border border-[#ddd8ce]">
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                 <span style={{ fontSize: '10px', letterSpacing: '0.2em', color: '#888888', fontFamily: 'Noto Sans JP, sans-serif' }}>登録済みの店舗情報</span>
                 <Link href="/dashboard/profile" style={{ fontSize: '11px', color: '#c9a84c', textDecoration: 'none' }}>編集する</Link>
@@ -93,7 +93,7 @@ export default function DashboardPage() {
               </div>
             </div>
           ) : (
-            <div style={{ padding: '24px 28px', backgroundColor: '#ede8df', border: '1px solid #ddd8ce', width: '100%', boxSizing: 'border-box' }}>
+            <div className="p-6 bg-[#ede8df] border border-[#ddd8ce]">
               <p style={{ fontSize: '16px', fontWeight: 500, color: '#0a0a0a', marginBottom: '8px', fontFamily: 'Noto Sans JP, sans-serif' }}>店舗情報が未登録です</p>
               <p style={{ fontSize: '13px', color: '#888888', marginBottom: '20px', fontFamily: 'Noto Sans JP, sans-serif' }}>口コミ分析を始めるために、店舗情報をご登録ください。</p>
               <Link href="/dashboard/profile" style={{ display: 'inline-block', padding: '12px 28px', backgroundColor: '#c9a84c', color: '#0a0a0a', fontSize: '13px', letterSpacing: '0.1em', textDecoration: 'none', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 500 }}>店舗情報を登録する →</Link>
@@ -101,7 +101,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', width: '100%', boxSizing: 'border-box' }}>
+        <div className="grid grid-cols-2 gap-4">
           <Link href="/dashboard/reviews" style={{ textDecoration: 'none' }}>
             <div style={{ padding: '32px', backgroundColor: 'white', border: '1px solid #ddd8ce', minHeight: '160px' }}>
               <div style={{ fontSize: '24px', marginBottom: '16px' }}>🖊️</div>
