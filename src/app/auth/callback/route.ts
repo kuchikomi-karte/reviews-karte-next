@@ -6,11 +6,26 @@ import type { NextRequest } from 'next/server'
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const loginUrl = new URL('/login', requestUrl.origin)
+  loginUrl.searchParams.set('error', 'oauth_callback')
 
-  if (code) {
-    const supabase = createRouteHandlerClient({ cookies })
-    await supabase.auth.exchangeCodeForSession(code)
+  if (!code) {
+    return NextResponse.redirect(loginUrl)
   }
 
-  return NextResponse.redirect(`${requestUrl.origin}/dashboard`)
+  try {
+    const cookieStore = await cookies()
+    const supabase = createRouteHandlerClient({
+      cookies: () => cookieStore,
+    })
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+
+    if (error) {
+      return NextResponse.redirect(loginUrl)
+    }
+  } catch {
+    return NextResponse.redirect(loginUrl)
+  }
+
+  return NextResponse.redirect(new URL('/dashboard', requestUrl.origin))
 }
