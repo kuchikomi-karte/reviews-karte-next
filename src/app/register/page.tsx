@@ -5,6 +5,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/ui/Header'
+import { getAuthCallbackUrl } from '@/lib/site-url'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -38,7 +39,7 @@ export default function RegisterPage() {
     }
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback` },
+      options: { redirectTo: getAuthCallbackUrl() },
     })
   }
 
