@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
+import Header from '@/components/ui/Header'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -35,7 +36,9 @@ export default function RegisterPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', fontFamily: 'Noto Sans JP, sans-serif' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8', display: 'flex', flexDirection: 'column', fontFamily: 'Noto Sans JP, sans-serif' }}>
+      <Header />
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, padding: '40px 24px' }}>
       <div style={{ textAlign: 'center', marginBottom: '56px' }}>
         <p style={{ fontSize: '10px', letterSpacing: '0.35em', color: '#888888', marginBottom: '12px' }}>ai×me lab</p>
         <h1 style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '22px', fontWeight: 400, letterSpacing: '0.2em', color: '#0a0a0a', margin: '0 0 12px 0' }}>口コミ経営カルテ</h1>
@@ -71,6 +74,7 @@ export default function RegisterPage() {
           すでにアカウントをお持ちの方は
           <a href="/login" style={{ color: '#c9a84c', textDecoration: 'none', marginLeft: '4px' }}>ログイン</a>
         </p>
+      </div>
       </div>
     </div>
   )
