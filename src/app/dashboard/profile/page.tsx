@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Header from '@/components/ui/Header'
 
 interface Profile {
@@ -229,6 +230,7 @@ export default function ProfilePage() {
                 <span>{bizLabel.other}</span>
               </label>
             </div>
+          </div>
 
           <div style={{ marginBottom: '32px' }}>
             <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px', fontWeight: 600 }}>
