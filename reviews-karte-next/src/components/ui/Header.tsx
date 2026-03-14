@@ -1,7 +1,16 @@
 'use client'
 import Link from 'next/link'
 
-export default function Header() {
+type HeaderProps = {
+  authLinkHref?: string
+  authLinkLabel?: string
+  onLogout?: () => void
+}
+
+export default function Header({
+  authLinkHref = 'https://reviews-karte-next.vercel.app/login',
+  authLinkLabel = '会員ログイン',
+}: HeaderProps) {
   return (
     <header className="site-header" style={{
       backgroundColor: '#0a0a0a',
@@ -29,7 +38,7 @@ export default function Header() {
     
         </Link>
         <div style={{ display: 'flex', gap: '12px' }}>
-          <Link href="https://reviews-karte-next.vercel.app/login" style={{
+          <Link href={authLinkHref} style={{
             border: '1px solid #c9a84c',
             color: '#c9a84c',
             padding: '8px 20px',
@@ -37,7 +46,7 @@ export default function Header() {
             fontSize: '13px',
             letterSpacing: '0.05em'
           }}>
-            会員ログイン
+            {authLinkLabel}
           </Link>
           <Link href="https://kuchikomi-karte.github.io/#karte" style={{
             backgroundColor: '#c9a84c',
