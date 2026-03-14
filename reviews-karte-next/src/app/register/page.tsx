@@ -46,7 +46,7 @@ export default function RegisterPage() {
         <p style={{ fontSize: '10px', letterSpacing: '0.35em', color: '#888888', marginBottom: '12px' }}>ai×me lab</p>
         <h1 style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '22px', fontWeight: 400, letterSpacing: '0.2em', color: '#0a0a0a', margin: '0 0 12px 0' }}>口コミ経営カルテ</h1>
         <div style={{ width: '32px', height: '1px', backgroundColor: '#c9a84c', margin: '0 auto 12px' }} />
-        <p style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#888888' }}>新規会員登録</p>
+        <h2 style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '28px', fontWeight: 700, letterSpacing: '0.1em', color: '#0a0a0a', margin: '0 0 32px 0' }}>新規会員登録</h2>
       </div>
       <div style={{ width: '100%', maxWidth: '380px' }}>
         {error && (
@@ -54,24 +54,8 @@ export default function RegisterPage() {
             {error}
           </div>
         )}
-        <button onClick={handleGoogleLogin} disabled={!agreedToTerms} style={{ width: '100%', padding: '15px', backgroundColor: agreedToTerms ? '#0a0a0a' : '#cccccc', color: '#f5f0e8', border: 'none', fontSize: '13px', letterSpacing: '0.12em', cursor: agreedToTerms ? 'pointer' : 'not-allowed', marginBottom: '28px', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 500, opacity: agreedToTerms ? 1 : 0.5 }}>
-          Googleアカウントで登録
-        </button>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '28px' }}>
-          <div style={{ flex: 1, height: '1px', backgroundColor: '#cccccc' }} />
-          <span style={{ fontSize: '10px', color: '#888888', letterSpacing: '0.15em' }}>または</span>
-          <div style={{ flex: 1, height: '1px', backgroundColor: '#cccccc' }} />
-        </div>
-        <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px' }}>メールアドレス</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" style={{ width: '100%', padding: '13px 16px', border: '1px solid #cccccc', backgroundColor: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Noto Sans JP, sans-serif', color: '#0a0a0a' }} />
-        </div>
-        <div style={{ marginBottom: '32px' }}>
-          <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px' }}>パスワード（6文字以上）</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={(e) => e.key === 'Enter' && handleRegister()} style={{ width: '100%', padding: '13px 16px', border: '1px solid #cccccc', backgroundColor: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Noto Sans JP, sans-serif', color: '#0a0a0a' }} />
-        </div>
 
-        <div style={{ border: '1px solid #d4c9b0', borderRadius: '6px', height: '140px', overflowY: 'scroll', padding: '16px', fontSize: '12px', color: '#555', lineHeight: '1.8', marginTop: '24px', backgroundColor: '#ffffff' }}>
+        <div style={{ border: '1px solid #d4c9b0', borderRadius: '6px', height: '140px', overflowY: 'scroll', padding: '16px', fontSize: '12px', color: '#555', lineHeight: '1.8', marginBottom: '20px', backgroundColor: '#ffffff' }}>
           <strong>【利用規約 要約】</strong><br />
           本サービス「口コミ経営カルテ」は、美容サロン向けの口コミ管理・経営支援サービスです。<br /><br />
           ・本サービスは経営成果（集客・売上・利益）を一切保証しません<br />
@@ -82,7 +66,7 @@ export default function RegisterPage() {
           <a href="/privacy" target="_blank" style={{ color: '#c9a84c' }}>▶ プライバシーポリシーの全文はこちら</a>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginTop: '12px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '24px' }}>
           <input
             type="checkbox"
             id="agreeTerms"
@@ -94,9 +78,37 @@ export default function RegisterPage() {
             利用規約およびプライバシーポリシーを確認し、同意します（必須）
           </label>
         </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+          <div style={{ flex: 1, height: '1px', backgroundColor: '#cccccc' }} />
+          <span style={{ fontSize: '10px', color: '#888888', letterSpacing: '0.15em' }}>または</span>
+          <div style={{ flex: 1, height: '1px', backgroundColor: '#cccccc' }} />
+        </div>
+
+        <button onClick={handleGoogleLogin} disabled={!agreedToTerms} style={{ width: '100%', padding: '15px', backgroundColor: agreedToTerms ? '#0a0a0a' : '#cccccc', color: '#f5f0e8', border: 'none', fontSize: '13px', letterSpacing: '0.12em', cursor: agreedToTerms ? 'pointer' : 'not-allowed', marginBottom: '24px', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 500, opacity: agreedToTerms ? 1 : 0.5 }}>
+          Googleアカウントで登録
+        </button>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+          <div style={{ flex: 1, height: '1px', backgroundColor: '#cccccc' }} />
+          <span style={{ fontSize: '10px', color: '#888888', letterSpacing: '0.15em' }}>または</span>
+          <div style={{ flex: 1, height: '1px', backgroundColor: '#cccccc' }} />
+        </div>
+
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px' }}>メールアドレス</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" style={{ width: '100%', padding: '13px 16px', border: '1px solid #cccccc', backgroundColor: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Noto Sans JP, sans-serif', color: '#0a0a0a' }} />
+        </div>
+
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px' }}>パスワード（6文字以上）</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={(e) => e.key === 'Enter' && handleRegister()} style={{ width: '100%', padding: '13px 16px', border: '1px solid #cccccc', backgroundColor: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Noto Sans JP, sans-serif', color: '#0a0a0a' }} />
+        </div>
+
         <button onClick={handleRegister} disabled={loading || !agreedToTerms} style={{ width: '100%', padding: '15px', backgroundColor: (loading || !agreedToTerms) ? '#cccccc' : '#c9a84c', color: '#0a0a0a', border: 'none', fontSize: '13px', letterSpacing: '0.12em', cursor: (loading || !agreedToTerms) ? 'not-allowed' : 'pointer', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 500, opacity: (loading || !agreedToTerms) ? 0.5 : 1 }}>
           {loading ? '登録中...' : '新規登録'}
         </button>
+
         <p style={{ textAlign: 'center', marginTop: '24px', fontSize: '12px', color: '#888888', fontFamily: 'Noto Sans JP, sans-serif' }}>
           すでにアカウントをお持ちの方は
           <a href="/login" style={{ color: '#c9a84c', textDecoration: 'none', marginLeft: '4px' }}>ログイン</a>
