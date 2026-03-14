@@ -1,0 +1,228 @@
+.main {
+  position: relative;
+  z-index: 1;
+  width: 58%;
+  padding: 48px 40px 48px 48px;
+  box-sizing: border-box;
+}
+
+.titleSection {
+  margin-bottom: 40px;
+}
+
+.pageTitle {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: #0a0a0a;
+  margin-bottom: 16px;
+}
+
+.planBadgeRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.planBadge {
+  padding: 6px 16px;
+  border: 1px solid #0a0a0a;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: #0a0a0a;
+  font-family: 'Noto Sans JP', sans-serif;
+  background: transparent;
+}
+
+.premiumLink {
+  font-size: 12px;
+  color: #c9a84c;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.salonCard {
+  padding: 24px 28px;
+  border: 1px solid #ddd8ce;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.salonCardRegistered {
+  background-color: #ffffff;
+}
+
+.salonCardEmpty {
+  background-color: #ede8df;
+}
+
+.salonCardHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.salonCardLabel {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: #888888;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.salonCardEditLink {
+  font-size: 11px;
+  color: #c9a84c;
+  text-decoration: none;
+}
+
+.salonName {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: #0a0a0a;
+  margin-bottom: 8px;
+}
+
+.salonMeta {
+  font-size: 12px;
+  color: #888888;
+  margin-bottom: 12px;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.salonLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.salonLink {
+  font-size: 12px;
+  color: #c9a84c;
+  text-decoration: none;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.emptyTitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: #0a0a0a;
+  margin-bottom: 8px;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.emptyDesc {
+  font-size: 13px;
+  color: #888888;
+  margin-bottom: 20px;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.registerButton {
+  display: inline-block;
+  padding: 12px 28px;
+  background-color: #c9a84c;
+  color: #0a0a0a;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 500;
+}
+
+.menuGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.menuCard {
+  padding: 32px;
+  border: 1px solid #ddd8ce;
+  min-height: 160px;
+  text-decoration: none;
+  display: block;
+  background-color: #ffffff;
+}
+
+.menuCardLocked {
+  padding: 32px;
+  border: 1px solid #ddd8ce;
+  min-height: 160px;
+  background-color: #ede8df;
+  opacity: 0.75;
+}
+
+.menuIcon {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.menuTitle {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: #0a0a0a;
+  margin-bottom: 10px;
+}
+
+.menuTitleLocked {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: #888888;
+  margin-bottom: 10px;
+}
+
+.menuDesc {
+  font-size: 12px;
+  color: #888888;
+  line-height: 1.8;
+  margin-bottom: 12px;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.menuStatus {
+  font-size: 11px;
+  font-family: 'Noto Sans JP', sans-serif;
+  color: #888888;
+}
+
+.menuStatusActive {
+  font-size: 11px;
+  font-family: 'Noto Sans JP', sans-serif;
+  color: #c9a84c;
+}
+
+/* 将来のタブUI用（現在は非表示） */
+.productTabs {
+  display: none;
+  gap: 0;
+  border-bottom: 1px solid #ddd8ce;
+  margin-bottom: 32px;
+}
+
+.productTab {
+  padding: 10px 24px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  font-family: 'Noto Sans JP', sans-serif;
+  color: #888888;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.productTabActive {
+  color: #0a0a0a;
+  border-bottom: 2px solid #c9a84c;
+}
