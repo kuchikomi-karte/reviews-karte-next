@@ -37,7 +37,7 @@ export default function LoginPage() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8', display: 'flex', flexDirection: 'column', fontFamily: 'Noto Sans JP, sans-serif' }}>
-      <Header showDashboardNav={false} />
+      <Header authLinkHref="/register" authLinkLabel="新規登録" />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, padding: '40px 24px' }}>
         <div style={{ width: '100%', maxWidth: '380px' }}>
         {error && (
