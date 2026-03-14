@@ -1,5 +1,4 @@
 'use client'
-
 import Link from 'next/link'
 
 export default function Header() {
@@ -11,14 +10,13 @@ export default function Header() {
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: '0 40px',
-      position: 'sticky',
-      top: 0,
-      zIndex: 100
+      width: '100%',
+      boxSizing: 'border-box'
     }}>
       <Link href="https://kuchikomi-karte.github.io" style={{
         color: '#c9a84c',
         fontSize: '18px',
-        fontFamily: 'Noto Serif JP, serif',
+        fontFamily: '"Noto Serif JP", serif',
         textDecoration: 'none',
         letterSpacing: '0.1em'
       }}>
