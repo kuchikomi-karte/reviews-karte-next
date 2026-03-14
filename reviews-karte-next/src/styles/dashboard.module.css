@@ -224,37 +224,42 @@
 
 .seiraBannerText1 {
   font-family: 'Noto Serif JP', serif;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 2;
   letter-spacing: 0.08em;
   color: #0a0a0a;
   margin: 0 0 8px 0;
+  text-shadow: 0 0 8px rgba(255,255,255,0.9), 0 0 16px rgba(255,255,255,0.8);
 }
 
 .seiraBannerText2 {
   font-family: 'Noto Serif JP', serif;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   line-height: 2;
   letter-spacing: 0.06em;
   color: #0a0a0a;
   margin: 0 0 8px 0;
+  text-shadow: 0 0 8px rgba(255,255,255,0.9), 0 0 16px rgba(255,255,255,0.8);
 }
 
 .seiraBannerText3 {
   font-family: 'Noto Serif JP', serif;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   line-height: 2;
   letter-spacing: 0.06em;
   color: #0a0a0a;
   margin: 0 0 16px 0;
+  text-shadow: 0 0 8px rgba(255,255,255,0.9), 0 0 16px rgba(255,255,255,0.8);
 }
 
 .seiraBannerAuthor {
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.25em;
   color: #c9a84c;
   margin: 0;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(255,255,255,0.9);
 }
