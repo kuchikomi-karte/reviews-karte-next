@@ -5,6 +5,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/ui/Header'
+import { getAuthCallbackUrl } from '@/lib/site-url'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -31,13 +32,13 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback` },
+      options: { redirectTo: getAuthCallbackUrl() },
     })
   }
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8', display: 'flex', flexDirection: 'column', fontFamily: 'Noto Sans JP, sans-serif' }}>
-      <Header />
+      <Header authLinkHref="/register" authLinkLabel="新規登録" />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, padding: '40px 24px' }}>
         <div style={{ width: '100%', maxWidth: '380px' }}>
         {error && (
