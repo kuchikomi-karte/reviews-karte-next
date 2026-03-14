@@ -1,74 +1,73 @@
 'use client'
 import Link from 'next/link'
 
-export default function Header() {
+type HeaderProps = {
+  authLinkHref?: string
+  authLinkLabel?: string
+  onLogout?: () => void
+}
+
+export default function Header({
+  authLinkHref = 'https://reviews-karte-next.vercel.app/login',
+  authLinkLabel = '会員ログイン',
+}: HeaderProps) {
   return (
     <header
+      className="site-header"
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
+        backgroundColor: '#0a0a0a',
+        height: '64px',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 40px',
         width: '100%',
-        height: '54px',
-        zIndex: 1000,
-        background: 'rgba(26,26,26,0.95)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        borderBottom: '1px solid rgba(201,165,90,0.16)',
         boxSizing: 'border-box' as const,
       }}
     >
       <div
         style={{
-          maxWidth: '1100px',
-          height: '54px',
-          margin: '0 auto',
-          padding: '0 24px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '16px',
+          width: '100%',
         }}
       >
         <Link
           href="https://kuchikomi-karte.github.io"
           style={{
-            fontFamily: "'Shippori Mincho', serif",
-            fontSize: '13px',
-            letterSpacing: '0.08em',
-            color: '#c9a55a',
+            color: '#c9a84c',
+            fontSize: '18px',
+            fontFamily: '"Noto Serif JP", serif',
             textDecoration: 'none',
-            whiteSpace: 'nowrap',
+            letterSpacing: '0.1em',
           }}
         >
           口コミ経営カルテ
         </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '12px' }}>
           <Link
-            href="/login"
+            href={authLinkHref}
             style={{
-              fontSize: '11px',
-              letterSpacing: '0.06em',
-              color: '#c9a55a',
+              border: '1px solid #c9a84c',
+              color: '#c9a84c',
+              padding: '8px 20px',
               textDecoration: 'none',
-              border: '1px solid rgba(201,165,90,0.5)',
-              padding: '6px 16px',
-              whiteSpace: 'nowrap',
+              fontSize: '13px',
+              letterSpacing: '0.05em',
             }}
           >
-            会員ログイン
+            {authLinkLabel}
           </Link>
           <Link
             href="https://kuchikomi-karte.github.io/#karte"
             style={{
-              fontSize: '11px',
-              letterSpacing: '0.06em',
+              backgroundColor: '#c9a84c',
               color: '#0a0a0a',
+              padding: '8px 20px',
               textDecoration: 'none',
-              backgroundColor: '#c9a55a',
-              padding: '6px 16px',
-              whiteSpace: 'nowrap',
-              fontWeight: 600,
+              fontSize: '13px',
+              fontWeight: '700',
+              letterSpacing: '0.05em',
             }}
           >
             無料診断を受ける
