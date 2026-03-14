@@ -25,28 +25,12 @@
 .heroImageOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to right,
-    #f5f0e8 0%,
-    transparent 35%
-  ),
-  linear-gradient(
-    to bottom,
-    #f5f0e8 0%,
-    transparent 8%,
-    transparent 92%,
-    #f5f0e8 100%
-  );
+  background: linear-gradient(to right, #f5f0e8 0%, transparent 35%),
+    linear-gradient(to bottom, #f5f0e8 0%, transparent 8%, transparent 92%, #f5f0e8 100%);
 }
 
 .quote {
-  position: absolute;
-  top: 480px;
-  right: 28px;
-  width: 300px;
-  z-index: 2;
-  pointer-events: none;
-  text-align: right;
+  display: none;
 }
 
 .quoteLine {

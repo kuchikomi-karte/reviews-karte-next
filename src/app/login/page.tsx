@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import Header from '@/components/ui/Header'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -34,14 +36,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', fontFamily: 'Noto Sans JP, sans-serif' }}>
-      <div style={{ textAlign: 'center', marginBottom: '56px' }}>
-        <p style={{ fontSize: '10px', letterSpacing: '0.35em', color: '#888888', marginBottom: '12px' }}>ai×me lab</p>
-        <h1 style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '22px', fontWeight: 400, letterSpacing: '0.2em', color: '#0a0a0a', margin: '0 0 12px 0' }}>口コミ経営カルテ</h1>
-        <div style={{ width: '32px', height: '1px', backgroundColor: '#c9a84c', margin: '0 auto 12px' }} />
-        <p style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#888888' }}>監修｜黒川聖羅</p>
-      </div>
-      <div style={{ width: '100%', maxWidth: '380px' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8', display: 'flex', flexDirection: 'column', fontFamily: 'Noto Sans JP, sans-serif' }}>
+      <Header />
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, padding: '40px 24px' }}>
+        <div style={{ width: '100%', maxWidth: '380px' }}>
         {error && (
           <div style={{ padding: '12px 16px', backgroundColor: '#fff5f5', border: '1px solid #ffdddd', marginBottom: '20px', fontSize: '12px', color: '#cc3333', letterSpacing: '0.05em' }}>
             {error}
@@ -66,6 +64,7 @@ export default function LoginPage() {
         <button onClick={handleLogin} disabled={loading} style={{ width: '100%', padding: '15px', backgroundColor: loading ? '#cccccc' : '#c9a84c', color: '#0a0a0a', border: 'none', fontSize: '13px', letterSpacing: '0.12em', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 500 }}>
           {loading ? 'ログイン中...' : 'ログイン'}
         </button>
+        </div>
       </div>
     </div>
   )
