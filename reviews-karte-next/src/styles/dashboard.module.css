@@ -208,3 +208,46 @@
 .productTabs {
   display: none;
 }
+
+.seiraBanner {
+  margin: 40px 0;
+  padding: 40px 48px;
+  border-left: 3px solid #c9a84c;
+}
+
+.seiraBannerText1 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 2;
+  letter-spacing: 0.1em;
+  color: #0a0a0a;
+  margin: 0 0 12px 0;
+}
+
+.seiraBannerText2 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 2;
+  letter-spacing: 0.08em;
+  color: #0a0a0a;
+  margin: 0 0 12px 0;
+}
+
+.seiraBannerText3 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 2;
+  letter-spacing: 0.08em;
+  color: #0a0a0a;
+  margin: 0 0 24px 0;
+}
+
+.seiraBannerAuthor {
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  color: #c9a84c;
+  margin: 0;
+}

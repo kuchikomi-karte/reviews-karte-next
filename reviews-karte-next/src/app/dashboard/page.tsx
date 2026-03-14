@@ -117,6 +117,13 @@ export default function DashboardPage() {
               </Link>
             </div>
           )}
+
+          <div className={styles.seiraBanner}>
+            <p className={styles.seiraBannerText1}>「口コミは、お客様からの経営レポート。」</p>
+            <p className={styles.seiraBannerText2}>「データを読まない経営者は、勘で戦っている。」</p>
+            <p className={styles.seiraBannerText3}>「返信の質が、店の格を決める。」</p>
+            <p className={styles.seiraBannerAuthor}>── 黒川 聖羅</p>
+          </div>
         </div>
 
         <div className={styles.menuGrid}>
