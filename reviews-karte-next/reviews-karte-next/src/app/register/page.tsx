@@ -44,7 +44,7 @@ export default function RegisterPage() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8', display: 'flex', flexDirection: 'column', fontFamily: 'Noto Sans JP, sans-serif' }}>
-      <Header showDashboardNav={false} />
+      <Header />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, padding: '40px 24px' }}>
         <div style={{ textAlign: 'center', marginBottom: '56px' }}>
           <p style={{ fontSize: '10px', letterSpacing: '0.35em', color: '#888888', marginBottom: '12px' }}>ai×me lab</p>
