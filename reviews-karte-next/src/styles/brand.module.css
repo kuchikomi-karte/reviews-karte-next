@@ -25,18 +25,8 @@
 .heroImageOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to right,
-    #f5f0e8 0%,
-    transparent 35%
-  ),
-  linear-gradient(
-    to bottom,
-    #f5f0e8 0%,
-    transparent 8%,
-    transparent 92%,
-    #f5f0e8 100%
-  );
+  background: linear-gradient(to right, #f5f0e8 0%, transparent 35%),
+    linear-gradient(to bottom, #f5f0e8 0%, transparent 8%, transparent 92%, #f5f0e8 100%);
 }
 
 .quote {
