@@ -3,10 +3,11 @@
 import Link from 'next/link'
 
 interface HeaderProps {
-  onLogout: () => void
+  onLogout?: () => void
+  showDashboardNav?: boolean
 }
 
-export default function Header({ onLogout }: HeaderProps) {
+export default function Header({ onLogout, showDashboardNav = true }: HeaderProps) {
   return (
     <header style={{
       backgroundColor: '#0a0a0a',
@@ -38,35 +39,69 @@ export default function Header({ onLogout }: HeaderProps) {
         </span>
       </div>
       <nav style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-        <Link href="/dashboard/profile" style={{
-          fontSize: '12px',
-          letterSpacing: '0.1em',
-          color: '#cccccc',
-          textDecoration: 'none',
-          fontFamily: 'Noto Sans JP, sans-serif'
-        }}>
-          プロフィール設定
-        </Link>
-        <Link href="/dashboard" style={{
-          fontSize: '12px',
-          letterSpacing: '0.1em',
-          color: '#cccccc',
-          textDecoration: 'none',
-          fontFamily: 'Noto Sans JP, sans-serif'
-        }}>
-          口コミ経営カルテ
-        </Link>
-        <button onClick={onLogout} style={{
-          fontSize: '12px',
-          color: '#888888',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          fontFamily: 'Noto Sans JP, sans-serif',
-          letterSpacing: '0.1em'
-        }}>
-          ログアウト
-        </button>
+        {showDashboardNav ? (
+          <>
+            <Link href="/dashboard/profile" style={{
+              fontSize: '12px',
+              letterSpacing: '0.1em',
+              color: '#cccccc',
+              textDecoration: 'none',
+              fontFamily: 'Noto Sans JP, sans-serif'
+            }}>
+              プロフィール設定
+            </Link>
+            <Link href="/dashboard" style={{
+              fontSize: '12px',
+              letterSpacing: '0.1em',
+              color: '#cccccc',
+              textDecoration: 'none',
+              fontFamily: 'Noto Sans JP, sans-serif'
+            }}>
+              口コミ経営カルテ
+            </Link>
+            <button onClick={onLogout} style={{
+              fontSize: '12px',
+              color: '#888888',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'Noto Sans JP, sans-serif',
+              letterSpacing: '0.1em'
+            }}>
+              ログアウト
+            </button>
+          </>
+        ) : (
+          <>
+            <Link href="/register" style={{
+              fontSize: '12px',
+              letterSpacing: '0.1em',
+              color: '#cccccc',
+              textDecoration: 'none',
+              fontFamily: 'Noto Sans JP, sans-serif'
+            }}>
+              新規会員登録
+            </Link>
+            <Link href="/api/checkout" style={{
+              fontSize: '12px',
+              letterSpacing: '0.1em',
+              color: '#cccccc',
+              textDecoration: 'none',
+              fontFamily: 'Noto Sans JP, sans-serif'
+            }}>
+              料金プラン
+            </Link>
+            <Link href="/" style={{
+              fontSize: '12px',
+              letterSpacing: '0.1em',
+              color: '#888888',
+              textDecoration: 'none',
+              fontFamily: 'Noto Sans JP, sans-serif'
+            }}>
+              TOPに戻る
+            </Link>
+          </>
+        )}
       </nav>
     </header>
   )
