@@ -26,6 +26,7 @@ export default function Header() {
           letterSpacing: '0.1em'
         }}>
           口コミ経営カルテ
+    
         </Link>
         <div style={{ display: 'flex', gap: '12px' }}>
           <Link href="https://reviews-karte-next.vercel.app/login" style={{
