@@ -79,11 +79,7 @@ export default function RegisterPage() {
           </label>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-          <div style={{ flex: 1, height: '1px', backgroundColor: '#cccccc' }} />
-          <span style={{ fontSize: '10px', color: '#888888', letterSpacing: '0.15em' }}>または</span>
-          <div style={{ flex: 1, height: '1px', backgroundColor: '#cccccc' }} />
-        </div>
+        <div style={{ height: '1px', backgroundColor: '#cccccc', marginBottom: '24px' }} />
 
         <button onClick={handleGoogleLogin} disabled={!agreedToTerms} style={{ width: '100%', padding: '15px', backgroundColor: agreedToTerms ? '#0a0a0a' : '#cccccc', color: '#f5f0e8', border: 'none', fontSize: '13px', letterSpacing: '0.12em', cursor: agreedToTerms ? 'pointer' : 'not-allowed', marginBottom: '24px', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 500, opacity: agreedToTerms ? 1 : 0.5 }}>
           Googleアカウントで登録
