@@ -87,42 +87,43 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          {hasSalonInfo ? (
-            <div className={`${styles.salonCard} ${styles.salonCardRegistered}`}>
-              <div className={styles.salonCardHeader}>
-                <span className={styles.salonCardLabel}>登録済みの店舗情報</span>
-                <Link href="/dashboard/profile" className={styles.salonCardEditLink}>編集する</Link>
+          <div className={styles.salonCardRow}>
+            {hasSalonInfo ? (
+              <div className={`${styles.salonCard} ${styles.salonCardRegistered}`}>
+                <div className={styles.salonCardHeader}>
+                  <span className={styles.salonCardLabel}>登録済みの店舗情報</span>
+                  <Link href="/dashboard/profile" className={styles.salonCardEditLink}>編集する</Link>
+                </div>
+                <p className={styles.salonName}>{profile?.salon_name}</p>
+                <p className={styles.salonMeta}>業種：{bizLabel[profile?.business_type || ''] || profile?.business_type}</p>
+                <div className={styles.salonLinks}>
+                  {profile?.google_review_url && (
+                    <a href={profile.google_review_url} target="_blank" rel="noopener noreferrer" className={styles.salonLink}>
+                      🔍 Google口コミを開く →
+                    </a>
+                  )}
+                  {profile?.other_review_url_1 && (
+                    <a href={profile.other_review_url_1} target="_blank" rel="noopener noreferrer" className={styles.salonLink}>
+                      🔗 その他口コミサイトを開く →
+                    </a>
+                  )}
+                </div>
               </div>
-              <p className={styles.salonName}>{profile?.salon_name}</p>
-              <p className={styles.salonMeta}>業種：{bizLabel[profile?.business_type || ''] || profile?.business_type}</p>
-              <div className={styles.salonLinks}>
-                {profile?.google_review_url && (
-                  <a href={profile.google_review_url} target="_blank" rel="noopener noreferrer" className={styles.salonLink}>
-                    🔍 Google口コミを開く →
-                  </a>
-                )}
-                {profile?.other_review_url_1 && (
-                  <a href={profile.other_review_url_1} target="_blank" rel="noopener noreferrer" className={styles.salonLink}>
-                    🔗 その他口コミサイトを開く →
-                  </a>
-                )}
+            ) : (
+              <div className={`${styles.salonCard} ${styles.salonCardEmpty}`}>
+                <p className={styles.emptyTitle}>店舗情報が未登録です</p>
+                <p className={styles.emptyDesc}>口コミ分析を始めるために、店舗情報をご登録ください。</p>
+                <Link href="/dashboard/profile" className={styles.registerButton}>
+                  店舗情報を登録する →
+                </Link>
               </div>
+            )}
+            <div className={styles.seiraBanner}>
+              <p className={styles.seiraBannerText1}>「口コミは、お客様からの経営レポート。」</p>
+              <p className={styles.seiraBannerText2}>「データを読まない経営者は、勘で戦っている。」</p>
+              <p className={styles.seiraBannerText3}>「返信の質が、店の格を決める。」</p>
+              <p className={styles.seiraBannerAuthor}>── 黒川 聖羅</p>
             </div>
-          ) : (
-            <div className={`${styles.salonCard} ${styles.salonCardEmpty}`}>
-              <p className={styles.emptyTitle}>店舗情報が未登録です</p>
-              <p className={styles.emptyDesc}>口コミ分析を始めるために、店舗情報をご登録ください。</p>
-              <Link href="/dashboard/profile" className={styles.registerButton}>
-                店舗情報を登録する →
-              </Link>
-            </div>
-          )}
-
-          <div className={styles.seiraBanner}>
-            <p className={styles.seiraBannerText1}>「口コミは、お客様からの経営レポート。」</p>
-            <p className={styles.seiraBannerText2}>「データを読まない経営者は、勘で戦っている。」</p>
-            <p className={styles.seiraBannerText3}>「返信の質が、店の格を決める。」</p>
-            <p className={styles.seiraBannerAuthor}>── 黒川 聖羅</p>
           </div>
         </div>
 

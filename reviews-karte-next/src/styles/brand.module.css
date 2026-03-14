@@ -30,13 +30,7 @@
 }
 
 .quote {
-  position: absolute;
-  top: 480px;
-  right: 28px;
-  width: 300px;
-  z-index: 2;
-  pointer-events: none;
-  text-align: right;
+  display: none;
 }
 
 .quoteLine {

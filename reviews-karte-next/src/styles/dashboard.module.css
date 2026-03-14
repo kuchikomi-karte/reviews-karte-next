@@ -44,12 +44,18 @@
   font-family: 'Noto Sans JP', sans-serif;
 }
 
+.salonCardRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
 .salonCard {
   padding: 24px 28px;
   border: 1px solid #ddd8ce;
   width: 50%;
   box-sizing: border-box;
-  margin-bottom: 40px;
 }
 
 .salonCardRegistered {
@@ -210,44 +216,45 @@
 }
 
 .seiraBanner {
-  margin: 40px 0;
-  padding: 40px 48px;
+  flex: 1;
+  padding: 24px 0;
   border-left: 3px solid #c9a84c;
+  padding-left: 32px;
 }
 
 .seiraBannerText1 {
   font-family: 'Noto Serif JP', serif;
-  font-size: 22px;
+  font-size: 12px;
   font-weight: 700;
   line-height: 2;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: #0a0a0a;
-  margin: 0 0 12px 0;
+  margin: 0 0 8px 0;
 }
 
 .seiraBannerText2 {
   font-family: 'Noto Serif JP', serif;
-  font-size: 20px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 2;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: #0a0a0a;
-  margin: 0 0 12px 0;
+  margin: 0 0 8px 0;
 }
 
 .seiraBannerText3 {
   font-family: 'Noto Serif JP', serif;
-  font-size: 20px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 2;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: #0a0a0a;
-  margin: 0 0 24px 0;
+  margin: 0 0 16px 0;
 }
 
 .seiraBannerAuthor {
-  font-size: 12px;
-  letter-spacing: 0.3em;
+  font-size: 10px;
+  letter-spacing: 0.25em;
   color: #c9a84c;
   margin: 0;
 }
