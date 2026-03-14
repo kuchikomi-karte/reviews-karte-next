@@ -56,7 +56,7 @@ export default function Header() {
               whiteSpace: 'nowrap',
             }}
           >
-            会員ログイン
+            新規登録
           </Link>
           <Link
             href="https://kuchikomi-karte.github.io/#karte"
