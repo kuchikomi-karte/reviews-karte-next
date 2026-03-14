@@ -28,7 +28,7 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false)
 
   const [salonName, setSalonName] = useState('')
-  const [businessType, setBusinessType] = useState<'hair' | 'nail' | 'esthetic' | 'other'>('')
+  const [businessType, setBusinessType] = useState<'hair' | 'nail' | 'esthetic' | 'other' | ''>('')
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearching, setIsSearching] = useState(false)
   const [searchResults, setSearchResults] = useState<any[]>([])
