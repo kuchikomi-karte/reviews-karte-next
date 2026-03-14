@@ -45,7 +45,7 @@ export default function Header() {
         </Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Link
-            href="/login"
+            href="/register"
             style={{
               fontSize: '11px',
               letterSpacing: '0.06em',
