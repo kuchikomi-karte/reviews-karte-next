@@ -45,7 +45,7 @@ export default function Header() {
         </Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Link
-            href="/register"
+            href="/login"
             style={{
               fontSize: '11px',
               letterSpacing: '0.06em',
@@ -56,7 +56,7 @@ export default function Header() {
               whiteSpace: 'nowrap',
             }}
           >
-            新規登録
+            会員ログイン
           </Link>
           <Link
             href="https://kuchikomi-karte.github.io/#karte"
