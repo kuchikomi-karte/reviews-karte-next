@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## reviews-karte
 
-## Getting Started
+`reviews-karte` is a Next.js application for the public landing page, user registration/login, the user dashboard, and the admin console.
 
-First, run the development server:
+## Setup
+
+Create `.env.local` from `.env.example` and fill in the required values.
 
 ```bash
+npm run check:auth-config
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Required Auth Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_SITE_URL`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`npm run check:auth-config` validates that these values exist locally and prints the exact callback URLs that must match the external auth configuration.
 
-## Learn More
+## Supabase Auth Checklist
 
-To learn more about Next.js, take a look at the following resources:
+- Site URL: `https://reviews-karte.vercel.app`
+- Redirect URLs must include:
+  - `https://reviews-karte.vercel.app/auth/callback`
+  - `https://reviews-karte-next.vercel.app/auth/callback`
+- Email provider must be enabled.
+- Google provider must be enabled.
+- Google Cloud OAuth redirect URI must include:
+  - `https://hsiavhnteqivpbztwpdq.supabase.co/auth/v1/callback`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Vercel Checklist
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `NEXT_PUBLIC_SITE_URL` in both Production and Preview.
+- If the production URL changes, update Supabase Site URL and Redirect URLs before deployment.
+- Pull envs locally when auditing:
 
-## Deploy on Vercel
+```bash
+vercel env pull .vercel.production.env --environment production --yes
+vercel env pull .vercel.preview.env --environment preview --yes
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Verification
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run check:auth-config
+npm run build
+```
+
+When validating auth flows manually, verify:
+
+- `/register` email signup reaches `/dashboard`
+- `/login` email login reaches `/dashboard`
+- Google auth redirects to Google and returns to `/auth/callback`
+- Failures emit `console.error` details in the browser or server logs
