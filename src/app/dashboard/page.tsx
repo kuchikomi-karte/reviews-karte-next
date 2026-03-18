@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { DashboardHeader } from "@/rebuild/user-shell";
+import Header from "@/components/ui/Header";
+import HeroSection from "@/components/brand/HeroSection";
+import styles from "@/styles/dashboard.module.css";
+import brandStyles from "@/styles/brand.module.css";
 import { USER_LOGIN_PATH, USER_PREMIUM_PATH, hasUserAuthConfig } from "@/lib/auth/user";
 
 type Profile = {
@@ -14,6 +17,13 @@ type Profile = {
   google_review_url?: string;
   other_review_url_1?: string;
   subscription_status?: string;
+};
+
+const bizLabel: Record<string, string> = {
+  hair: "ヘアサロン",
+  nail: "ネイルサロン",
+  esthetic: "エステサロン",
+  other: "その他",
 };
 
 export default function DashboardPage() {
@@ -51,73 +61,85 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div style={{ display: "flex", minHeight: "100vh", alignItems: "center", justifyContent: "center", backgroundColor: "#0a0a0a" }}>
+      <div style={{ display: "flex", minHeight: "100vh", alignItems: "center", justifyContent: "center", backgroundColor: "#f5f0e8" }}>
         <p style={{ fontSize: "13px", color: "#888888", letterSpacing: "0.1em", fontFamily: "Noto Sans JP, sans-serif" }}>読み込み中...</p>
       </div>
     );
   }
 
+  const hasSalonInfo = Boolean(profile?.salon_name && profile?.google_review_url);
   const isPremium = profile?.subscription_status === "premium";
   const displayName = profile?.name || "ゲスト";
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#f5f0e8", fontFamily: "Noto Sans JP, sans-serif" }}>
-      <DashboardHeader onLogout={handleLogout} />
+    <div className={brandStyles.wrapper}>
+      <Header onLogout={handleLogout} />
+      <HeroSection />
 
-      <div style={{ display: "flex", minHeight: "calc(100vh - 64px)" }}>
-        {/* 左：聖羅の言葉 */}
-        <div style={{ width: "45%", backgroundColor: "#0a0a0a", padding: "64px 48px", display: "flex", flexDirection: "column", justifyContent: "center", position: "relative", overflow: "hidden" }}>
-          <img
-            src="/images/seira.png"
-            alt=""
-            style={{ position: "absolute", right: 0, bottom: 0, height: "85%", objectFit: "contain", objectPosition: "bottom right", opacity: 0.85 }}
-          />
-          <div style={{ position: "relative", zIndex: 1, maxWidth: "260px" }}>
-            <p style={{ fontSize: "10px", letterSpacing: "0.3em", color: "#888888", marginBottom: "32px", fontFamily: "Noto Sans JP, sans-serif" }}>ai x me lab</p>
-            <p style={{ fontSize: "15px", lineHeight: 2.2, color: "#f5f0e8", fontFamily: "Noto Serif JP, serif", fontWeight: 400, letterSpacing: "0.08em", margin: "0 0 8px" }}>「口コミは、お客様からの経営レポート。」</p>
-            <p style={{ fontSize: "15px", lineHeight: 2.2, color: "#f5f0e8", fontFamily: "Noto Serif JP, serif", fontWeight: 400, letterSpacing: "0.08em", margin: "0 0 8px" }}>「データを読まない経営者は、感で戦っている。」</p>
-            <p style={{ fontSize: "15px", lineHeight: 2.2, color: "#f5f0e8", fontFamily: "Noto Serif JP, serif", fontWeight: 400, letterSpacing: "0.08em", margin: "0 0 32px" }}>「返信の質が、次の客を決める。」</p>
-            <p style={{ fontSize: "11px", letterSpacing: "0.2em", color: "#c9a84c", fontFamily: "Noto Sans JP, sans-serif" }}>―― 黒川聖羅</p>
+      <main className={styles.main}>
+        <div className={styles.titleSection}>
+          <h1 className={styles.pageTitle}>{displayName} さんのカルテ</h1>
+
+          <div className={styles.planBadgeRow}>
+            <span className={styles.planBadge}>
+              {isPremium ? "プレミアムプラン" : "フリープラン"}
+            </span>
+            {!isPremium && (
+              <Link href={USER_PREMIUM_PATH} className={styles.premiumLink}>
+                プレミアムプランを見る
+              </Link>
+            )}
           </div>
-        </div>
 
-        {/* 右：ダッシュボード */}
-        <div style={{ flex: 1, padding: "48px 40px" }}>
-          <div style={{ marginBottom: "32px" }}>
-            <p style={{ fontSize: "10px", letterSpacing: "0.3em", color: "#888888", margin: "0 0 8px" }}>DASHBOARD</p>
-            <h1 style={{ fontFamily: "Noto Serif JP, serif", fontSize: "24px", fontWeight: 700, color: "#0a0a0a", margin: "0 0 8px", letterSpacing: "0.1em" }}>{displayName} さんのカルテ</h1>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <span style={{ fontSize: "11px", letterSpacing: "0.1em", color: isPremium ? "#c9a84c" : "#888888", border: `1px solid ${isPremium ? "#c9a84c" : "#cccccc"}`, padding: "3px 10px" }}>
-                {isPremium ? "プレミアムプラン" : "フリープラン"}
-              </span>
-              {!isPremium && (
-                <Link href={USER_PREMIUM_PATH} style={{ fontSize: "11px", color: "#c9a84c", textDecoration: "none", letterSpacing: "0.05em" }}>
-                  プレミアムプランを見る →
-                </Link>
-              )}
+          <div className={styles.salonCardRow}>
+            {hasSalonInfo ? (
+              <div className={`${styles.salonCard} ${styles.salonCardRegistered}`}>
+                <div className={styles.salonCardHeader}>
+                  <span className={styles.salonCardLabel}>登録済みの店舗情報</span>
+                  <Link href="/dashboard/profile" className={styles.salonCardEditLink}>編集する</Link>
+                </div>
+                <p className={styles.salonName}>{profile?.salon_name}</p>
+                <p className={styles.salonMeta}>業種: {bizLabel[profile?.business_type || ""] || profile?.business_type}</p>
+                <div className={styles.salonLinks}>
+                  {profile?.google_review_url && (
+                    <a href={profile.google_review_url} target="_blank" rel="noopener noreferrer" className={styles.salonLink}>Google 店舗情報を見る</a>
+                  )}
+                  {profile?.other_review_url_1 && (
+                    <a href={profile.other_review_url_1} target="_blank" rel="noopener noreferrer" className={styles.salonLink}>他サイトのURLを見る</a>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className={`${styles.salonCard} ${styles.salonCardEmpty}`}>
+                <p className={styles.emptyTitle}>店舗情報が未登録です</p>
+                <p className={styles.emptyDesc}>口コミ管理を使い始める前に、店舗情報と口コミサイトURLを登録してください。</p>
+                <Link href="/dashboard/profile" className={styles.registerButton}>店舗情報を登録する</Link>
+              </div>
+            )}
+
+            <div className={styles.seiraBanner}>
+              <p className={styles.seiraBannerText1}>口コミの状況を客観的に見て、次に集中すべきポイントを明確にする。</p>
+              <p className={styles.seiraBannerText2}>返信案・週次書類・店舗情報の 3 つを同じ画面で捉えるように設計しています。</p>
+              <p className={styles.seiraBannerAuthor}>―― 黒川聖羅</p>
             </div>
           </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-            {[
-              { href: "/dashboard/reviews", title: "AI口コミ返信案", desc: "口コミ本文から返信案の下書きを生成します。", tag: isPremium ? "プレミアム利用中" : "フリープランで利用可能" },
-              { href: "/dashboard/karte", title: "週次レポート", desc: "今週の口コミ傾向と改善ポイントを確認します。", tag: isPremium ? "利用可能" : "プレミアム限定" },
-              { href: "/dashboard/consultation", title: "月次レポート", desc: "月間の口コミデータを分析したレポートです。", tag: isPremium ? "利用可能" : "プレミアム限定" },
-              { href: "/dashboard/consultation", title: "経営相談", desc: "担当上長への相談内容を送信し確認します。", tag: "相談状況を確認" },
-            ].map((item) => (
-              <Link
-                key={item.href + item.title}
-                href={item.href}
-                style={{ display: "block", padding: "28px 24px", backgroundColor: "white", border: "1px solid #ddd8ce", textDecoration: "none", color: "inherit" }}
-              >
-                <h3 style={{ margin: "0 0 10px", fontSize: "15px", fontWeight: 700, letterSpacing: "0.08em", color: "#0a0a0a", fontFamily: "Noto Serif JP, serif" }}>{item.title}</h3>
-                <p style={{ margin: "0 0 16px", fontSize: "12px", lineHeight: 1.9, color: "#666666" }}>{item.desc}</p>
-                <p style={{ margin: 0, fontSize: "10px", letterSpacing: "0.12em", color: "#c9a84c" }}>{item.tag}</p>
-              </Link>
-            ))}
-          </div>
         </div>
-      </div>
+
+        <div className={styles.menuGrid}>
+          {[
+            { href: "/dashboard/reviews", title: "AI口コミ返信案", description: "口コミ本文から返信案の下書きを生成します。", status: isPremium ? "プレミアム利用中" : "フリープランで利用可能" },
+            { href: "/dashboard/karte", title: "週次レポート", description: "今週の口コミ傾向と改善ポイントを確認します。", status: isPremium ? "利用可能" : "プレミアム限定" },
+            { href: "/dashboard/consultation", title: "月次レポート", description: "月間の口コミデータを分析したレポートです。", status: isPremium ? "利用可能" : "プレミアム限定" },
+            { href: "/dashboard/consultation", title: "経営相談", description: "担当上長への相談内容を送信し処理メモを確認します。", status: "相談状況を確認" },
+          ].map((item) => (
+            <Link key={item.href + item.title} href={item.href} className={styles.menuCard}>
+              <h3 className={styles.menuTitle}>{item.title}</h3>
+              <p className={styles.menuDesc}>{item.description}</p>
+              <p className={isPremium ? styles.menuStatusActive : styles.menuStatus}>{item.status}</p>
+            </Link>
+          ))}
+        </div>
+      </main>
     </div>
   );
 }
