@@ -126,7 +126,10 @@ export function UserLoginPage() {
       if (!data?.url) {
         console.error("[user-login] Google login did not return a redirect URL");
         setError(getAuthFailureMessage("google-login"));
+        return;
       }
+
+      window.location.href = data.url;
     } catch (authError) {
       console.error("[user-login] Unexpected Google login error", {
         error: toLoggableAuthError(authError),
@@ -382,7 +385,10 @@ export function UserRegisterPage() {
           "[user-register] Google registration did not return a redirect URL",
         );
         setError(getAuthFailureMessage("google-register"));
+        return;
       }
+
+      window.location.href = data.url;
     } catch (authError) {
       console.error("[user-register] Unexpected Google registration error", {
         error: toLoggableAuthError(authError),
