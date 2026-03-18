@@ -1,166 +1,117 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import Header from '@/components/ui/Header'
-import HeroSection from '@/components/brand/HeroSection'
-import styles from '@/styles/dashboard.module.css'
-import brandStyles from '@/styles/brand.module.css'
+import { useEffect, useState } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { UserShell } from "@/rebuild/user-shell";
+import { USER_LOGIN_PATH, USER_PREMIUM_PATH, hasUserAuthConfig } from "@/lib/auth/user";
 
-interface Profile {
-  name?: string
-  salon_name?: string
-  business_type?: string
-  google_review_url?: string
-  other_review_url_1?: string
-  subscription_status?: string
-}
-
-const bizLabel: Record<string, string> = {
-  hair: '美容室',
-  nail: 'ネイルサロン',
-  esthetic: 'エステサロン',
-  other: 'その他'
-}
+type Profile = {
+  name?: string;
+  salon_name?: string;
+  business_type?: string;
+  google_review_url?: string;
+  subscription_status?: string;
+};
 
 export default function DashboardPage() {
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [loading, setLoading] = useState(true)
-  const supabase = createClientComponentClient()
-  const router = useRouter()
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const hasSupabaseConfig = hasUserAuthConfig();
 
   useEffect(() => {
     const loadProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.push('/login'); return }
-      const { data } = await supabase.from('users').select('*').eq('id', user.id).single()
-      if (data) setProfile(data)
-      setLoading(false)
-    }
-    loadProfile()
-  }, [])
+      if (!hasSupabaseConfig) {
+        setLoading(false);
+        return;
+      }
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    router.push('/login')
+      const supabase = createClientComponentClient();
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push(USER_LOGIN_PATH);
+        return;
+      }
+
+      const { data } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (data) setProfile(data);
+      setLoading(false);
+    };
+
+    void loadProfile();
+  }, [hasSupabaseConfig, router]);
+
+  if (loading) {
+    return (
+      <div style={{ display: "flex", minHeight: "100vh", alignItems: "center", justifyContent: "center", backgroundColor: "#f5f0e8" }}>
+        <p style={{ fontSize: "13px", color: "#888888", letterSpacing: "0.1em", fontFamily: "Noto Sans JP, sans-serif" }}>読み込み中...</p>
+      </div>
+    );
   }
 
-  if (loading) return (
-    <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f5f0e8' }}>
-      <p style={{ fontSize: '13px', color: '#888888', letterSpacing: '0.1em', fontFamily: 'Noto Sans JP, sans-serif' }}>読み込み中...</p>
-    </div>
-  )
-
-  const hasSalonInfo = !!(profile?.salon_name && profile?.google_review_url)
-  const isPremium = profile?.subscription_status === 'premium'
-  const displayName = profile?.name || 'ゲスト'
+  const isPremium = profile?.subscription_status === "premium";
+  const hasSalonInfo = Boolean(profile?.salon_name && profile?.google_review_url);
 
   return (
-    <div className={brandStyles.wrapper}>
-      <Header onLogout={handleLogout} />
-      <HeroSection />
-
-      <main className={styles.main}>
-        <div className={styles.titleSection}>
-          <h1 className={styles.pageTitle}>{displayName}さんのカルテ</h1>
-
-          <div className={styles.planBadgeRow}>
-            <span className={styles.planBadge}>
-              {isPremium ? 'プレミアムプラン' : 'フリープラン'}
-            </span>
-            {!isPremium && (
-              <Link href="/premium" className={styles.premiumLink}>
-                プレミアムプランへ →
-              </Link>
-            )}
-          </div>
-
-          {/* 将来のタブUI（現在非表示） */}
-          <div className={styles.productTabs}>
-            <button className={`${styles.productTab} ${styles.productTabActive}`}>
-              口コミ経営カルテ
-            </button>
-            <button className={styles.productTab}>
-              SNS経営カルテ
-            </button>
-          </div>
-
-          <div className={styles.salonCardRow}>
-            {hasSalonInfo ? (
-              <div className={`${styles.salonCard} ${styles.salonCardRegistered}`}>
-                <div className={styles.salonCardHeader}>
-                  <span className={styles.salonCardLabel}>登録済みの店舗情報</span>
-                  <Link href="/dashboard/profile" className={styles.salonCardEditLink}>編集する</Link>
-                </div>
-                <p className={styles.salonName}>{profile?.salon_name}</p>
-                <p className={styles.salonMeta}>業種：{bizLabel[profile?.business_type || ''] || profile?.business_type}</p>
-                <div className={styles.salonLinks}>
-                  {profile?.google_review_url && (
-                    <a href={profile.google_review_url} target="_blank" rel="noopener noreferrer" className={styles.salonLink}>
-                      🔍 Google口コミを開く →
-                    </a>
-                  )}
-                  {profile?.other_review_url_1 && (
-                    <a href={profile.other_review_url_1} target="_blank" rel="noopener noreferrer" className={styles.salonLink}>
-                      🔗 その他口コミサイトを開く →
-                    </a>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className={`${styles.salonCard} ${styles.salonCardEmpty}`}>
-                <p className={styles.emptyTitle}>店舗情報が未登録です</p>
-                <p className={styles.emptyDesc}>口コミ分析を始めるために、店舗情報をご登録ください。</p>
-                <Link href="/dashboard/profile" className={styles.registerButton}>
-                  店舗情報を登録する →
-                </Link>
-              </div>
-            )}
-            <div className={styles.seiraBanner}>
-              <p className={styles.seiraBannerText1}>「口コミは、お客様からの経営レポート。」</p>
-              <p className={styles.seiraBannerText2}>「データを読まない経営者は、勘で戦っている。」</p>
-              <p className={styles.seiraBannerText3}>「返信の質が、店の格を決める。」</p>
-              <p className={styles.seiraBannerAuthor}>── 黒川 聖羅</p>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.menuGrid}>
-          <Link href="/dashboard/reviews" className={styles.menuCard}>
-            <div className={styles.menuIcon}>🖊️</div>
-            <h3 className={styles.menuTitle}>AI口コミ返信案</h3>
-            <p className={styles.menuDesc}>口コミの返信案をAIが自動で作成します。</p>
-            <p className={isPremium ? styles.menuStatusActive : styles.menuStatus}>
-              {isPremium ? '無制限' : '1日5回まで'}
-            </p>
+    <UserShell
+      eyebrow="ai x me lab"
+      title="口コミ経営カルテ"
+      description="口コミの状況を客観的に見て、次に集中すべきポイントを明確にします。"
+    >
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+        {[
+          {
+            href: "/dashboard/reviews",
+            title: "AI口コミ返信",
+            description: "口コミ本文から返信案の下書きを生成します。",
+            status: isPremium ? "プレミアム利用中" : "フリープランで利用可能",
+          },
+          {
+            href: "/dashboard/consultation",
+            title: "経営相談",
+            description: "担当上長への相談内容を送信し処理メモを確認します。",
+            status: "相談状況を確認",
+          },
+          {
+            href: "/dashboard/profile",
+            title: "店舗情報",
+            description: "Google店舗情報と口コミサイトURLを管理します。",
+            status: hasSalonInfo ? "登録済み" : "登録を開始",
+          },
+          {
+            href: USER_PREMIUM_PATH,
+            title: "プレミアムプラン",
+            description: "上位プランの機能詳細と料金を確認します。",
+            status: isPremium ? "加入中" : "アップグレード可能",
+          },
+        ].map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            style={{
+              display: "block",
+              padding: "24px",
+              backgroundColor: "white",
+              border: "1px solid #ddd8ce",
+              borderRadius: "16px",
+              textDecoration: "none",
+              color: "inherit",
+            }}
+          >
+            <h3 style={{ margin: "0 0 8px", fontSize: "16px", fontWeight: 700, letterSpacing: "0.08em", color: "#0a0a0a" }}>{item.title}</h3>
+            <p style={{ margin: "0 0 12px", fontSize: "13px", lineHeight: 1.8, color: "#666666" }}>{item.description}</p>
+            <p style={{ margin: 0, fontSize: "11px", letterSpacing: "0.1em", color: "#c9a84c" }}>{item.status}</p>
           </Link>
-
-          <div className={styles.menuCardLocked}>
-            <div className={styles.menuIcon}>📊</div>
-            <h3 className={styles.menuTitleLocked}>週次レポート</h3>
-            <p className={styles.menuDesc}>週ごとの口コミ傾向やスコアの変化を確認できます。</p>
-            <p className={styles.menuStatus}>{isPremium ? '' : 'プレミアムで解放'}</p>
-          </div>
-
-          <div className={styles.menuCardLocked}>
-            <div className={styles.menuIcon}>📋</div>
-            <h3 className={styles.menuTitleLocked}>月次レポート</h3>
-            <p className={styles.menuDesc}>月次傾向や改善ポイントをレポート形式で確認します。</p>
-            <p className={styles.menuStatus}>プレミアムで解放</p>
-          </div>
-
-          <Link href="/dashboard/consultation" className={styles.menuCard}>
-            <div className={styles.menuIcon}>💬</div>
-            <h3 className={styles.menuTitle}>経営相談</h3>
-            <p className={styles.menuDesc}>運用の悩みや返信方針を相談できます。</p>
-            <p className={isPremium ? styles.menuStatusActive : styles.menuStatus}>
-              {isPremium ? '無制限' : '利用不可'}
-            </p>
-          </Link>
-        </div>
-      </main>
-    </div>
-  )
+        ))}
+      </div>
+    </UserShell>
+  );
 }
