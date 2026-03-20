@@ -294,18 +294,27 @@
 @media (max-width: 768px) {
   .main {
     width: 100%;
-    padding: 24px 20px 48px 20px;
+    padding: 24px 16px 48px 16px;
   }
 
   .pageTitle {
-    font-size: 22px;
+    font-size: 20px;
   }
 
-  .menuGrid {
-    grid-template-columns: 1fr;
+  .salonCardRow {
+    flex-direction: column;
+    gap: 20px;
   }
 
   .salonCard {
     width: 100%;
+  }
+
+  .seiraBanner {
+    display: none;
+  }
+
+  .menuGrid {
+    grid-template-columns: 1fr;
   }
 }
