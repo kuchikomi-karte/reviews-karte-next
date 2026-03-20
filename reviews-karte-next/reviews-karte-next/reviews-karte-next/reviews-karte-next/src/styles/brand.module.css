@@ -7,7 +7,7 @@
 
 .heroImageArea {
   position: absolute;
-  top: 64px;
+  top: 56px;
   right: 0;
   width: 42%;
   bottom: 0;
@@ -29,43 +29,17 @@
     linear-gradient(to bottom, #f5f0e8 0%, transparent 8%, transparent 92%, #f5f0e8 100%);
 }
 
+.heroImageMobile {
+  display: none;
+}
+
 .quote {
   display: none;
 }
 
-.quoteLine {
-  width: 24px;
-  height: 1px;
-  background-color: #c9a84c;
-  margin-left: auto;
-  margin-bottom: 16px;
-}
-
-.quoteText1 {
-  font-family: 'Noto Serif JP', serif;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 2;
-  letter-spacing: 0.08em;
-  color: #0a0a0a;
-  margin: 0 0 8px 0;
-  white-space: nowrap;
-}
-
-.quoteText2 {
-  font-family: 'Noto Serif JP', serif;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 2;
-  letter-spacing: 0.06em;
-  color: #0a0a0a;
-  margin: 0 0 8px 0;
-  white-space: nowrap;
-}
-
-.quoteAuthor {
-  font-size: 10px;
-  letter-spacing: 0.25em;
-  color: #c9a84c;
-  margin: 0;
+@media (max-width: 768px) {
+  .heroImageArea {
+    width: 45%;
+    top: 52px;
+  }
 }
