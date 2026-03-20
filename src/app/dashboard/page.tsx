@@ -1,5 +1,27 @@
 "use client";
 
+const isMobileStyle = `
+  @media (max-width: 768px) {
+    .seira-image-container {
+      display: none !important;
+    }
+    .dashboard-main {
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+    .feature-grid {
+      grid-template-columns: 1fr !important;
+    }
+    .store-card {
+      width: calc(100% - 32px) !important;
+      left: 16px !important;
+      top: auto !important;
+      position: relative !important;
+      margin-top: 24px;
+    }
+  }
+`;
+
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
@@ -72,11 +94,13 @@ export default function DashboardPage() {
   const displayName = profile?.name || "ゲスト";
 
   return (
-    <div className={brandStyles.wrapper}>
-      <Header onLogout={handleLogout} />
-      <HeroSection />
+    <>
+      <style dangerouslySetInnerHTML={{ __html: isMobileStyle }} />
+      <div className={brandStyles.wrapper}>
+        <Header onLogout={handleLogout} />
+        <HeroSection />
 
-      <main className={styles.main}>
+        <main className={`${styles.main} dashboard-main`}>
         <div className={styles.titleSection}>
           <h1 className={styles.pageTitle}>{displayName} さんのカルテ</h1>
 
@@ -93,7 +117,7 @@ export default function DashboardPage() {
 
           <div className={styles.salonCardRow}>
             {hasSalonInfo ? (
-              <div className={`${styles.salonCard} ${styles.salonCardRegistered}`}>
+              <div className={`${styles.salonCard} ${styles.salonCardRegistered} store-card`}>
                 <div className={styles.salonCardHeader}>
                   <span className={styles.salonCardLabel}>登録済みの店舗情報</span>
                   <Link href="/dashboard/profile" className={styles.salonCardEditLink}>編集する</Link>
@@ -110,7 +134,7 @@ export default function DashboardPage() {
                 </div>
               </div>
             ) : (
-              <div className={`${styles.salonCard} ${styles.salonCardEmpty}`}>
+              <div className={`${styles.salonCard} ${styles.salonCardEmpty} store-card`}>
                 <p className={styles.emptyTitle}>店舗情報が未登録です</p>
                 <p className={styles.emptyDesc}>口コミ管理を使い始める前に、店舗情報と口コミサイトURLを登録してください。</p>
                 <Link href="/dashboard/profile" className={styles.registerButton}>店舗情報を登録する</Link>
@@ -125,7 +149,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className={styles.menuGrid}>
+        <div className={`${styles.menuGrid} feature-grid`}>
           {[
             { href: "/dashboard/reviews", title: "AI口コミ返信案", description: "口コミ本文から返信案の下書きを生成します。", status: isPremium ? "プレミアム利用中" : "フリープランで利用可能" },
             { href: "/dashboard/karte", title: "週次レポート", description: "今週の口コミ傾向と改善ポイントを確認します。", status: isPremium ? "利用可能" : "プレミアム限定" },
@@ -139,7 +163,8 @@ export default function DashboardPage() {
             </Link>
           ))}
         </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 }
