@@ -69,3 +69,13 @@
   color: #c9a84c;
   margin: 0;
 }
+
+@media (max-width: 768px) {
+  .heroImageArea {
+    display: none;
+  }
+
+  .quote {
+    display: none;
+  }
+}

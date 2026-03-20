@@ -1,163 +1,100 @@
 'use client'
+
 import Link from 'next/link'
 
-type HeaderProps = {
-  authLinkHref?: string
-  authLinkLabel?: string
-  onLogout?: () => void
+interface HeaderProps {
+  onLogout: () => void
 }
 
-export default function Header({
-  authLinkHref = 'https://reviews-karte-next.vercel.app/login',
-  authLinkLabel = '会員ログイン',
-  onLogout,
-}: HeaderProps) {
-  const isDashboardHeader = typeof onLogout === 'function'
+export default function Header({ onLogout }: HeaderProps) {
+  return (
+    <>
+      <style>{`
+        .header-inner {
+          position: relative;
+          z-index: 10;
+          background-color: #0a0a0a;
+          padding: 0 32px;
+          height: 56px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .header-brand {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-shrink: 0;
+        }
+        .header-lab {
+          font-size: 10px;
+          letter-spacing: 0.2em;
+          color: #888;
+          font-family: 'Noto Sans JP', sans-serif;
+        }
+        .header-divider {
+          color: #444;
+          font-size: 12px;
+        }
+        .header-title {
+          font-family: 'Noto Serif JP', serif;
+          font-size: 14px;
+          letter-spacing: 0.2em;
+          color: #f5f0e8;
+          font-weight: 400;
+          white-space: nowrap;
+        }
+        .header-nav {
+          display: flex;
+          align-items: center;
+          gap: 24px;
+        }
+        .header-nav a, .header-nav button {
+          font-size: 11px;
+          letter-spacing: 0.12em;
+          color: #aaa;
+          text-decoration: none;
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-family: 'Noto Sans JP', sans-serif;
+          padding: 0;
+          white-space: nowrap;
+        }
 
-  if (isDashboardHeader) {
-    return (
-      <header
-        style={{
-          backgroundColor: '#0a0a0a',
-          padding: '0 48px',
-          height: '64px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          position: 'relative',
-          zIndex: 10,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span
-            style={{
-              fontSize: '10px',
-              letterSpacing: '0.3em',
-              color: '#888888',
-              fontFamily: 'Noto Sans JP, sans-serif',
-            }}
-          >
-            ai×me lab
-          </span>
-          <span
-            style={{
-              fontSize: '16px',
-              letterSpacing: '0.15em',
-              color: '#f5f0e8',
-              fontFamily: 'Noto Serif JP, serif',
-              fontWeight: 400,
-            }}
-          >
-            口コミ経営カルテ
-          </span>
+        @media (max-width: 768px) {
+          .header-inner {
+            padding: 0 16px;
+            height: 52px;
+          }
+          .header-lab, .header-divider {
+            display: none;
+          }
+          .header-title {
+            font-size: 13px;
+          }
+          .header-nav {
+            gap: 14px;
+          }
+          .header-nav a, .header-nav button {
+            font-size: 10px;
+            letter-spacing: 0.05em;
+          }
+        }
+      `}</style>
+
+      <header className="header-inner">
+        <div className="header-brand">
+          <span className="header-lab">ai×me lab</span>
+          <span className="header-divider">|</span>
+          <span className="header-title">黒川聖羅カルテ</span>
         </div>
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-          <Link
-            href="/dashboard/profile"
-            style={{
-              fontSize: '12px',
-              letterSpacing: '0.1em',
-              color: '#cccccc',
-              textDecoration: 'none',
-              fontFamily: 'Noto Sans JP, sans-serif',
-            }}
-          >
-            プロフィール設定
-          </Link>
-          <Link
-            href="/dashboard"
-            style={{
-              fontSize: '12px',
-              letterSpacing: '0.1em',
-              color: '#cccccc',
-              textDecoration: 'none',
-              fontFamily: 'Noto Sans JP, sans-serif',
-            }}
-          >
-            口コミ経営カルテ
-          </Link>
-          <button
-            onClick={onLogout}
-            style={{
-              fontSize: '12px',
-              color: '#888888',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontFamily: 'Noto Sans JP, sans-serif',
-              letterSpacing: '0.1em',
-            }}
-          >
-            ログアウト
-          </button>
+        <nav className="header-nav">
+          <Link href="/dashboard/profile">プロフィール設定</Link>
+          <Link href="/dashboard">口コミ経営カルテ</Link>
+          <button onClick={onLogout}>ログアウト</button>
         </nav>
       </header>
-    )
-  }
-
-  return (
-    <header
-      className="site-header"
-      style={{
-        backgroundColor: '#0a0a0a',
-        height: '64px',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 40px',
-        width: '100%',
-        boxSizing: 'border-box' as const,
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          width: '100%',
-        }}
-      >
-        <Link
-          href="https://kuchikomi-karte.github.io"
-          style={{
-            color: '#c9a84c',
-            fontSize: '18px',
-            fontFamily: '"Noto Serif JP", serif',
-            textDecoration: 'none',
-            letterSpacing: '0.1em',
-          }}
-        >
-          口コミ経営カルテ
-        </Link>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <Link
-            href={authLinkHref}
-            style={{
-              border: '1px solid #c9a84c',
-              color: '#c9a84c',
-              padding: '8px 20px',
-              textDecoration: 'none',
-              fontSize: '13px',
-              letterSpacing: '0.05em',
-            }}
-          >
-            {authLinkLabel}
-          </Link>
-          <Link
-            href="https://kuchikomi-karte.github.io/#karte"
-            style={{
-              backgroundColor: '#c9a84c',
-              color: '#0a0a0a',
-              padding: '8px 20px',
-              textDecoration: 'none',
-              fontSize: '13px',
-              fontWeight: '700',
-              letterSpacing: '0.05em',
-            }}
-          >
-            無料診断を受ける
-          </Link>
-        </div>
-      </div>
-    </header>
+    </>
   )
 }

@@ -3,7 +3,7 @@ import styles from '@/styles/brand.module.css'
 export default function HeroSection() {
   return (
     <>
-      <div className={`${styles.heroImageArea} seira-image-container`}>
+      <div className={styles.heroImageArea}>
         <img src="/images/seira.png" alt="" />
         <div className={styles.heroImageOverlay} />
       </div>

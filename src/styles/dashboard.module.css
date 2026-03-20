@@ -290,3 +290,22 @@
     0 0 8px rgba(255,255,255,1),
     0 0 16px rgba(255,255,255,0.9);
 }
+
+@media (max-width: 768px) {
+  .main {
+    width: 100%;
+    padding: 24px 20px 48px 20px;
+  }
+
+  .pageTitle {
+    font-size: 22px;
+  }
+
+  .menuGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .salonCard {
+    width: 100%;
+  }
+}
