@@ -23,6 +23,12 @@
 # misc
 .DS_Store
 *.pem
+.codex_tmp_push_main/
+.codex_tmp_query/
+admin-cookies.txt
+reviews-karte-next/
+redirect-only/
+kuchikomi-karte.github.io/index.html.backup*
 
 # debug
 npm-debug.log*
