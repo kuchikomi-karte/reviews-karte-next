@@ -1,99 +1,71 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { loginAction } from "@/app/login/actions";
-import {
-  ADMIN_AUTH_COOKIE,
-  hasAdminAuthConfig,
-  isAdminAuthenticated,
-} from "@/lib/admin-auth";
+'use client'
 
-type LoginPageProps = {
-  searchParams: Promise<{
-    error?: string;
-  }>;
-};
+import { useState } from 'react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import Header from '@/components/ui/Header'
 
-export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const [{ error }, cookieStore] = await Promise.all([searchParams, cookies()]);
-  const isLoggedIn = isAdminAuthenticated(
-    cookieStore.get(ADMIN_AUTH_COOKIE)?.value,
-  );
+export default function LoginPage() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const supabase = createClientComponentClient()
+  const router = useRouter()
 
-  if (isLoggedIn) {
-    redirect("/admin");
+  const handleLogin = async () => {
+    if (!email || !password) { setError('メールアドレスとパスワードを入力してください'); return }
+    setError('')
+    setLoading(true)
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) {
+      setError('メールアドレスまたはパスワードが正しくありません')
+    } else {
+      router.push('/dashboard')
+      router.refresh()
+    }
+    setLoading(false)
   }
 
-  const isConfigured = hasAdminAuthConfig();
+  const handleGoogleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback` },
+    })
+  }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#f6f1ea] px-4 py-10">
-      <div className="w-full max-w-md rounded-[2rem] border border-stone-200 bg-white p-8 shadow-[0_18px_50px_rgba(28,25,23,0.08)] sm:p-10">
-        <div className="mb-8">
-          <p className="text-xs font-medium uppercase tracking-[0.3em] text-stone-400">
-            Admin Login
-          </p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-stone-900">
-            口コミ経営カルテ 管理者ログイン
-          </h1>
-          <p className="mt-3 text-sm leading-6 text-stone-500">
-            ローカル確認用の仮認証です。ログイン後に管理画面の各ページを確認できます。
-          </p>
-        </div>
-
-        {error === "invalid_credentials" ? (
-          <div className="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-            メールアドレスまたはパスワードが正しくありません。
-          </div>
-        ) : null}
-
-        {(!isConfigured || error === "auth_not_configured") && (
-          <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            管理者認証が未設定です。`.env.local` または `.env.local.example`
-            を確認して、`ADMIN_EMAIL` と `ADMIN_PASSWORD` を設定してください。
+    <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8', display: 'flex', flexDirection: 'column', fontFamily: 'Noto Sans JP, sans-serif' }}>
+      <Header authLinkHref="/register" authLinkLabel="新規登録" />
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, padding: '40px 24px' }}>
+        <div style={{ width: '100%', maxWidth: '380px' }}>
+        {error && (
+          <div style={{ padding: '12px 16px', backgroundColor: '#fff5f5', border: '1px solid #ffdddd', marginBottom: '20px', fontSize: '12px', color: '#cc3333', letterSpacing: '0.05em' }}>
+            {error}
           </div>
         )}
-
-        <form action={loginAction} className="space-y-5">
-          <div>
-            <label
-              htmlFor="email"
-              className="mb-2 block text-sm font-medium text-stone-700"
-            >
-              メールアドレス
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="admin@example.com"
-              className="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-900 outline-none transition focus:border-stone-400 focus:bg-white"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="mb-2 block text-sm font-medium text-stone-700"
-            >
-              パスワード
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="********"
-              className="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-900 outline-none transition focus:border-stone-400 focus:bg-white"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="flex w-full items-center justify-center rounded-2xl bg-stone-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-stone-800"
-          >
-            ログイン
-          </button>
-        </form>
+        <button onClick={handleGoogleLogin} style={{ width: '100%', padding: '15px', backgroundColor: '#0a0a0a', color: '#f5f0e8', border: 'none', fontSize: '13px', letterSpacing: '0.12em', cursor: 'pointer', marginBottom: '28px', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 500 }}>
+          Googleアカウントで登録・ログイン
+        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '28px' }}>
+          <div style={{ flex: 1, height: '1px', backgroundColor: '#cccccc' }} />
+          <span style={{ fontSize: '10px', color: '#888888', letterSpacing: '0.15em' }}>または</span>
+          <div style={{ flex: 1, height: '1px', backgroundColor: '#cccccc' }} />
+        </div>
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px' }}>メールアドレス</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" style={{ width: '100%', padding: '13px 16px', border: '1px solid #cccccc', backgroundColor: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Noto Sans JP, sans-serif', color: '#0a0a0a' }} />
+        </div>
+        <div style={{ marginBottom: '32px' }}>
+          <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px' }}>パスワード</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={(e) => e.key === 'Enter' && handleLogin()} style={{ width: '100%', padding: '13px 16px', border: '1px solid #cccccc', backgroundColor: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Noto Sans JP, sans-serif', color: '#0a0a0a' }} />
+        </div>
+        <button onClick={handleLogin} disabled={loading} style={{ width: '100%', padding: '15px', backgroundColor: loading ? '#cccccc' : '#c9a84c', color: '#0a0a0a', border: 'none', fontSize: '13px', letterSpacing: '0.12em', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 500 }}>
+          {loading ? 'ログイン中...' : 'ログイン'}
+        </button>
+        </div>
       </div>
-    </main>
-  );
+    </div>
+  )
 }

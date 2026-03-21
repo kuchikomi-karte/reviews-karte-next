@@ -116,11 +116,6 @@ export default function DashboardPage() {
                 <Link href="/dashboard/profile" className={styles.registerButton}>
                   店舗情報を登録する →
                 </Link>
-                <div style={{ textAlign: 'center', marginTop: '24px' }}>
-                  <Link href="/dashboard" style={{ fontSize: '12px', color: '#888888', textDecoration: 'none' }}>
-                    ダッシュボードへ戻る
-                  </Link>
-                </div>
               </div>
             )}
             <div className={styles.seiraBanner}>

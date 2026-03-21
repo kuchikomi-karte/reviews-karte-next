@@ -1,350 +1,357 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import Header from '@/components/ui/Header'
+import { useState } from "react";
+import Link from "next/link";
+import { UserShell } from "@/components/dashboard/UserShell";
 
-interface Profile {
-  salon_name?: string
-  business_type?: string
-  google_review_url?: string
-  other_review_url_1?: string
-  other_review_url_2?: string
-  other_review_url_3?: string
-}
+type BusinessType = "" | "hair" | "nail" | "esthetic" | "other";
+type SearchPlace = {
+  name: string;
+  formattedAddress: string;
+};
+type ProfileDraft = {
+  salonName: string;
+  businessType: BusinessType;
+  googleAddress: string;
+  otherUrls: string[];
+};
 
-const bizLabel: Record<string, string> = {
-  hair: '美容室',
-  nail: 'ネイルサロン',
-  esthetic: 'エステサロン',
-  other: 'その他'
+const STORAGE_KEY = "reviews-karte-profile-draft";
+
+const bizLabel: Record<Exclude<BusinessType, "">, string> = {
+  hair: "ヘアサロン",
+  nail: "ネイルサロン",
+  esthetic: "エステサロン",
+  other: "その他",
+};
+
+const mockPlaces: SearchPlace[] = [
+  { name: "Luna Beauty Clinic", formattedAddress: "東京都港区南青山 1-2-3" },
+  { name: "Atelier MUSE", formattedAddress: "東京都渋谷区神宮前 4-5-6" },
+  { name: "Noble Smile Dental", formattedAddress: "東京都中央区銀座 7-8-9" },
+];
+
+function getStoredDraft(): ProfileDraft {
+  if (typeof window === "undefined") {
+    return {
+      salonName: "",
+      businessType: "",
+      googleAddress: "",
+      otherUrls: [""],
+    };
+  }
+
+  const stored = window.localStorage.getItem(STORAGE_KEY);
+
+  if (!stored) {
+    return {
+      salonName: "",
+      businessType: "",
+      googleAddress: "",
+      otherUrls: [""],
+    };
+  }
+
+  const draft = JSON.parse(stored) as Partial<ProfileDraft>;
+
+  return {
+    salonName: draft.salonName ?? "",
+    businessType: (draft.businessType as BusinessType) ?? "",
+    googleAddress: draft.googleAddress ?? "",
+    otherUrls: draft.otherUrls?.length ? draft.otherUrls : [""],
+  };
 }
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
+  const initialDraft = getStoredDraft();
+  const [salonName, setSalonName] = useState(initialDraft.salonName);
+  const [businessType, setBusinessType] = useState<BusinessType>(
+    initialDraft.businessType,
+  );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchPlace[]>([]);
+  const [selectedPlace, setSelectedPlace] = useState<SearchPlace | null>(
+    initialDraft.googleAddress
+      ? {
+          name: initialDraft.salonName,
+          formattedAddress: initialDraft.googleAddress,
+        }
+      : null,
+  );
+  const [otherUrls, setOtherUrls] = useState(initialDraft.otherUrls);
+  const [statusMessage, setStatusMessage] = useState("");
 
-  const [salonName, setSalonName] = useState('')
-  const [businessType, setBusinessType] = useState<'hair' | 'nail' | 'esthetic' | 'other' | ''>('')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [isSearching, setIsSearching] = useState(false)
-  const [searchResults, setSearchResults] = useState<any[]>([])
-  const [selectedPlace, setSelectedPlace] = useState<any | null>(null)
-  const [otherUrls, setOtherUrls] = useState(['', '', '', ''])
-  const [showApiKeyMessage, setShowApiKeyMessage] = useState(false)
+  const handleSearch = () => {
+    setIsSearching(true);
+    setStatusMessage("");
 
-  const supabase = createClientComponentClient()
-  const router = useRouter()
+    window.setTimeout(() => {
+      const normalizedQuery = searchQuery.trim().toLowerCase();
+      const filteredPlaces = mockPlaces.filter((place) =>
+        place.name.toLowerCase().includes(normalizedQuery),
+      );
+      setSearchResults(filteredPlaces);
+      setIsSearching(false);
+    }, 350);
+  };
 
-  useEffect(() => {
-    const loadProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.push('/login'); return }
-      const { data } = await supabase.from('users').select('*').eq('id', user.id).single()
-      if (data) {
-        setProfile(data)
-        if (data.salon_name) setSalonName(data.salon_name)
-        if (data.business_type) setBusinessType(data.business_type)
-        const urls = [data.other_review_url_1 || '', data.other_review_url_2 || '', data.other_review_url_3 || '']
-        setOtherUrls(urls)
-      }
-      setLoading(false)
-    }
-    loadProfile()
-  }, [])
-
-  const handleSearch = async () => {
-    if (!searchQuery.trim() || !process.env.GOOGLE_MAPS_API_KEY) {
-      if (!process.env.GOOGLE_MAPS_API_KEY) {
-        setShowApiKeyMessage(true)
-      }
-      return
-    }
-
-    setShowApiKeyMessage(false)
-    setIsSearching(true)
-    setSearchResults([])
-    setSelectedPlace(null)
-
-    try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(searchQuery)}&key=${process.env.GOOGLE_MAPS_API_KEY}&language=ja&region=JP`
-      )
-      const data = await response.json()
-
-      if (data.candidates && data.candidates.length > 0) {
-        setSearchResults(data.candidates)
-      }
-    } catch (error) {
-      console.error('Search error:', error)
-    } finally {
-      setIsSearching(false)
-    }
-  }
-
-  const handleSelectPlace = (place: any) => {
-    setSelectedPlace(place)
-    if (place.formatted_address) {
-      setSalonName(place.formatted_address)
-    }
-  }
+  const handleSelectPlace = (place: SearchPlace) => {
+    setSelectedPlace(place);
+    setSalonName(place.name);
+    setSearchResults([]);
+    setStatusMessage("Google店舗候補を選択しました。");
+  };
 
   const addUrlField = () => {
-    const emptyIndex = otherUrls.findIndex(url => url === '')
-    if (emptyIndex !== -1) {
-      const newUrls = [...otherUrls]
-      newUrls[emptyIndex] = ''
-      setOtherUrls(newUrls)
+    if (otherUrls.length < 3) {
+      setOtherUrls([...otherUrls, ""]);
     }
-  }
+  };
 
   const removeUrlField = (index: number) => {
-    const newUrls = otherUrls.filter((_, i) => i !== index)
-    setOtherUrls(newUrls)
-  }
+    setOtherUrls(otherUrls.filter((_, currentIndex) => currentIndex !== index));
+  };
 
-  const handleSave = async () => {
-    setSaving(true)
+  const handleSave = () => {
+    const draft: ProfileDraft = {
+      salonName,
+      businessType,
+      googleAddress: selectedPlace?.formattedAddress ?? "",
+      otherUrls,
+    };
 
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const updateData: any = {
-        salon_name: salonName || profile?.salon_name,
-        business_type: businessType || profile?.business_type,
-      }
-
-      // 口コミサイトURLを更新
-      otherUrls.forEach((url, index) => {
-        if (url) {
-          updateData[`other_review_url_${index + 1}`] = url
-        }
-      })
-
-      const { error } = await supabase.from('users').update(updateData).eq('id', user.id)
-
-      if (!error) {
-        alert('店舗情報を保存しました')
-        setProfile({ ...profile, ...updateData })
-      } else {
-        alert('保存に失敗しました')
-      }
-    } catch (error) {
-      console.error('Save error:', error)
-      alert('保存に失敗しました')
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    router.push('/login')
-  }
-
-  if (loading) return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f5f0e8', flexDirection: 'column', fontFamily: 'Noto Sans JP, sans-serif' }}>
-      <Header onLogout={handleLogout} />
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, padding: '40px 24px' }}>
-        <p style={{ fontSize: '13px', color: '#888888' }}>読み込み中...</p>
-      </div>
-    </div>
-  )
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+    setStatusMessage("入力内容をこのブラウザに保存しました。");
+  };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f5f0e8', flexDirection: 'column', fontFamily: 'Noto Sans JP, sans-serif' }}>
-      <Header onLogout={handleLogout} />
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 24px', flex: 1 }}>
-        <div style={{ width: '100%', maxWidth: '600px' }}>
-          <h1 style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '28px', fontWeight: 700, letterSpacing: '0.1em', color: '#0a0a0a', margin: '0 0 12px 0' }}>
-            店舗情報の登録
-          </h1>
-          <p style={{ fontSize: '13px', color: '#666666', lineHeight: '1.8', marginBottom: '32px' }}>
-            口コミ分析を始めるために、店舗の基本情報と口コミ導線を登録してください。
-          </p>
+    <UserShell
+      eyebrow="Profile"
+      title="店舗情報の登録"
+      description="口コミ運用に必要な店舗情報、Google 店舗候補、その他口コミサイト URL を整理するページです。既存の登録フォーム構成を維持しつつ、保存導線を戻しています。"
+    >
+      <div style={{ display: "grid", gap: "24px" }}>
+        <section style={panelStyle}>
+          <label style={labelStyle}>店舗名</label>
+          <input
+            type="text"
+            value={salonName}
+            onChange={(event) => setSalonName(event.target.value)}
+            placeholder="例: Luna Beauty Clinic"
+            style={inputStyle}
+          />
 
-          <div style={{ marginBottom: '32px' }}>
-            <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px', fontWeight: 600 }}>
-              店舗名
-            </label>
+          <div style={{ marginTop: "24px" }}>
+            <label style={labelStyle}>業種</label>
+            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+              {(Object.keys(bizLabel) as Array<Exclude<BusinessType, "">>).map((type) => (
+                <label key={type} style={radioLabelStyle}>
+                  <input
+                    type="radio"
+                    name="businessType"
+                    checked={businessType === type}
+                    onChange={() => setBusinessType(type)}
+                    style={{ marginRight: "8px" }}
+                  />
+                  {bizLabel[type]}
+                </label>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section style={panelStyle}>
+          <label style={labelStyle}>Google店舗検索</label>
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
             <input
               type="text"
-              value={salonName}
-              onChange={(e) => setSalonName(e.target.value)}
-              placeholder="例：サロン・ヘアサロン"
-              style={{ width: '100%', padding: '13px 16px', border: '1px solid #cccccc', backgroundColor: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Noto Sans JP, sans-serif', color: '#0a0a0a' }}
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="店舗名または地名を入力"
+              style={{ ...inputStyle, flex: 1, minWidth: "240px" }}
             />
+            <button
+              onClick={handleSearch}
+              disabled={isSearching}
+              style={primaryButtonStyle(isSearching)}
+            >
+              {isSearching ? "検索中..." : "検索"}
+            </button>
           </div>
+          <p style={{ margin: "12px 0 0", fontSize: "12px", color: "#888888" }}>
+            現在は候補確認用のローカル検索です。候補を選ぶと店舗情報に反映されます。
+          </p>
 
-          <div style={{ marginBottom: '32px' }}>
-            <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px', fontWeight: 600 }}>
-              業種
-            </label>
-            <div style={{ display: 'flex', gap: '16px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', fontSize: '13px', color: '#0a0a0a', cursor: 'pointer' }}>
-                <input
-                  type="radio"
-                  name="business_type"
-                  value="hair"
-                  checked={businessType === 'hair'}
-                  onChange={() => setBusinessType('hair')}
-                  style={{ marginRight: '8px' }}
-                />
-                <span>{bizLabel.hair}</span>
-              </label>
-              <label style={{ display: 'flex', alignItems: 'center', fontSize: '13px', color: '#0a0a0a', cursor: 'pointer' }}>
-                <input
-                  type="radio"
-                  name="business_type"
-                  value="nail"
-                  checked={businessType === 'nail'}
-                  onChange={() => setBusinessType('nail')}
-                  style={{ marginRight: '8px' }}
-                />
-                <span>{bizLabel.nail}</span>
-              </label>
-              <label style={{ display: 'flex', alignItems: 'center', fontSize: '13px', color: '#0a0a0a', cursor: 'pointer' }}>
-                <input
-                  type="radio"
-                  name="business_type"
-                  value="esthetic"
-                  checked={businessType === 'esthetic'}
-                  onChange={() => setBusinessType('esthetic')}
-                  style={{ marginRight: '8px' }}
-                />
-                <span>{bizLabel.esthetic}</span>
-              </label>
-              <label style={{ display: 'flex', alignItems: 'center', fontSize: '13px', color: '#0a0a0a', cursor: 'pointer' }}>
-                <input
-                  type="radio"
-                  name="business_type"
-                  value="other"
-                  checked={businessType === 'other'}
-                  onChange={() => setBusinessType('other')}
-                  style={{ marginRight: '8px' }}
-                />
-                <span>{bizLabel.other}</span>
-              </label>
-            </div>
-          </div>
-
-          <div style={{ marginBottom: '32px' }}>
-            <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px', fontWeight: 600 }}>
-              Google店舗検索
-            </label>
-            <div style={{ border: '1px solid #cccccc', borderRadius: '6px', padding: '16px', backgroundColor: 'white' }}>
-              <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="店舗名または住所を入力"
-                  disabled={!process.env.GOOGLE_MAPS_API_KEY}
-                  style={{ flex: 1, padding: '13px 16px', border: '1px solid #cccccc', backgroundColor: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Noto Sans JP, sans-serif', color: '#0a0a0a', opacity: process.env.GOOGLE_MAPS_API_KEY ? 1 : 0.5 }}
-                />
+          {searchResults.length > 0 ? (
+            <div style={{ marginTop: "16px", display: "grid", gap: "10px" }}>
+              {searchResults.map((place) => (
                 <button
-                  onClick={handleSearch}
-                  disabled={isSearching || !searchQuery.trim() || !process.env.GOOGLE_MAPS_API_KEY}
-                  style={{ padding: '13px 24px', backgroundColor: isSearching ? '#cccccc' : (process.env.GOOGLE_MAPS_API_KEY ? '#0a0a0a' : '#cccccc'), color: '#f5f0e8', border: 'none', fontSize: '13px', cursor: isSearching || !searchQuery.trim() || !process.env.GOOGLE_MAPS_API_KEY ? 'not-allowed' : 'pointer', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 600 }}
+                  key={place.name}
+                  onClick={() => handleSelectPlace(place)}
+                  style={{
+                    textAlign: "left",
+                    padding: "14px 16px",
+                    border: "1px solid #e5dfd4",
+                    borderRadius: "16px",
+                    backgroundColor: "white",
+                    cursor: "pointer",
+                  }}
                 >
-                  {isSearching ? '検索中...' : 'Google店舗を検索'}
+                  <div style={{ fontWeight: 700, color: "#0a0a0a" }}>{place.name}</div>
+                  <div style={{ marginTop: "4px", fontSize: "12px", color: "#666666" }}>
+                    {place.formattedAddress}
+                  </div>
                 </button>
-              </div>
-
-              {showApiKeyMessage && (
-                <p style={{ fontSize: '12px', color: '#cc3333', marginTop: '12px' }}>
-                  ⚠️ Google APIキーが未設定のため検索は利用できません。管理者にお問い合わせください。
-                </p>
-              )}
-
-              {searchResults.length > 0 && (
-                <div style={{ maxHeight: '200px', overflowY: 'auto', borderTop: '1px solid #e0e0e0', paddingTop: '16px' }}>
-                  {searchResults.map((place, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handleSelectPlace(place)}
-                      style={{
-                        padding: '12px',
-                        borderBottom: '1px solid #f0f0f0',
-                        cursor: 'pointer',
-                        backgroundColor: selectedPlace === place ? '#f5f0e8' : 'white',
-                        transition: 'background-color 0.2s'
-                      }}
-                    >
-                      <div style={{ fontWeight: 600, color: '#0a0a0a', marginBottom: '4px' }}>{place.name}</div>
-                      <div style={{ fontSize: '12px', color: '#666666' }}>{place.formatted_address || place.vicinity || ''}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {selectedPlace && (
-                <div style={{ padding: '12px', backgroundColor: '#f5f0e8', borderRadius: '4px', marginTop: '12px' }}>
-                  <div style={{ fontWeight: 600, color: '#0a0a0a', marginBottom: '4px' }}>選択した店舗:</div>
-                  <div style={{ fontSize: '13px', color: '#0a0a0a' }}>{selectedPlace.formatted_address}</div>
-                </div>
-              )}
+              ))}
             </div>
-          </div>
+          ) : null}
 
-          <div style={{ marginBottom: '32px' }}>
-            <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#0a0a0a', marginBottom: '8px', fontWeight: 600 }}>
-              その他の口コミサイトURL
-            </label>
+          {selectedPlace ? (
+            <div
+              style={{
+                marginTop: "16px",
+                padding: "16px",
+                borderRadius: "18px",
+                backgroundColor: "#f8f4ec",
+              }}
+            >
+              <div style={{ fontWeight: 700, color: "#0a0a0a" }}>選択中のGoogle店舗</div>
+              <div style={{ marginTop: "6px", fontSize: "13px", color: "#666666" }}>
+                {selectedPlace.formattedAddress}
+              </div>
+            </div>
+          ) : null}
+        </section>
+
+        <section style={panelStyle}>
+          <label style={labelStyle}>その他の口コミサイトURL</label>
+          <div style={{ display: "grid", gap: "12px" }}>
             {otherUrls.map((url, index) => (
-              <div key={index} style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+              <div key={`${index}-${url}`} style={{ display: "flex", gap: "10px" }}>
                 <input
                   type="url"
                   value={url}
-                  onChange={(e) => {
-                    const newUrls = [...otherUrls]
-                    newUrls[index] = e.target.value
-                    setOtherUrls(newUrls)
+                  onChange={(event) => {
+                    const nextUrls = [...otherUrls];
+                    nextUrls[index] = event.target.value;
+                    setOtherUrls(nextUrls);
                   }}
                   placeholder="https://..."
-                  style={{ flex: 1, padding: '13px 16px', border: '1px solid #cccccc', backgroundColor: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box', fontFamily: 'Noto Sans JP, sans-serif', color: '#0a0a0a' }}
+                  style={{ ...inputStyle, flex: 1 }}
                 />
-                {otherUrls.length > 1 && (
+                {otherUrls.length > 1 ? (
                   <button
                     onClick={() => removeUrlField(index)}
-                    style={{ padding: '8px 12px', backgroundColor: '#ffdddd', color: '#cc3333', border: 'none', fontSize: '12px', cursor: 'pointer', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 600 }}
+                    style={{
+                      padding: "0 16px",
+                      border: "1px solid #f0c5c5",
+                      backgroundColor: "#fff5f5",
+                      borderRadius: "14px",
+                      color: "#b64d4d",
+                      cursor: "pointer",
+                    }}
                   >
                     削除
                   </button>
-                )}
+                ) : null}
               </div>
             ))}
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
-              <button
-                onClick={addUrlField}
-                style={{ padding: '13px 24px', backgroundColor: '#0a0a0a', color: '#f5f0e8', border: 'none', fontSize: '13px', cursor: 'pointer', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 600 }}
-              >
-                ＋追加
-              </button>
-            </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '48px', marginBottom: '32px' }}>
+          {otherUrls.length < 3 ? (
             <button
-              onClick={handleSave}
-              disabled={saving}
-              style={{ padding: '15px 40px', backgroundColor: saving ? '#cccccc' : '#c9a84c', color: '#0a0a0a', border: 'none', fontSize: '13px', cursor: saving ? 'not-allowed' : 'pointer', fontFamily: 'Noto Sans JP, sans-serif', fontWeight: 600, minWidth: '200px' }}
+              onClick={addUrlField}
+              style={{ ...secondaryButtonStyle, marginTop: "16px" }}
             >
-              {saving ? '保存中...' : '保存する'}
+              URLを追加
             </button>
-          </div>
+          ) : null}
+        </section>
 
-          <div style={{ textAlign: 'center', marginTop: '32px' }}>
-            <Link href="/dashboard" style={{ fontSize: '12px', color: '#888888', textDecoration: 'none' }}>
-              ダッシュボードへ戻る
-            </Link>
-          </div>
+        <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
+          <button onClick={handleSave} style={primaryButtonStyle(false)}>
+            保存する
+          </button>
+          <Link href="/dashboard" style={secondaryLinkStyle}>
+            ダッシュボードへ戻る
+          </Link>
+          {statusMessage ? (
+            <span style={{ fontSize: "13px", color: "#666666" }}>{statusMessage}</span>
+          ) : null}
         </div>
       </div>
-    </div>
-  )
+    </UserShell>
+  );
 }
+
+const panelStyle = {
+  padding: "28px",
+  border: "1px solid #ddd8ce",
+  borderRadius: "24px",
+  backgroundColor: "white",
+} as const;
+
+const labelStyle = {
+  display: "block",
+  fontSize: "11px",
+  letterSpacing: "0.15em",
+  color: "#0a0a0a",
+  marginBottom: "8px",
+  fontWeight: 700,
+} as const;
+
+const inputStyle = {
+  width: "100%",
+  padding: "13px 16px",
+  border: "1px solid #cccccc",
+  borderRadius: "14px",
+  backgroundColor: "white",
+  fontSize: "14px",
+  outline: "none",
+  boxSizing: "border-box" as const,
+  color: "#0a0a0a",
+} as const;
+
+const radioLabelStyle = {
+  display: "flex",
+  alignItems: "center",
+  fontSize: "13px",
+  color: "#0a0a0a",
+  cursor: "pointer",
+} as const;
+
+const primaryButtonStyle = (disabled: boolean) =>
+  ({
+    padding: "14px 24px",
+    backgroundColor: disabled ? "#cccccc" : "#0a0a0a",
+    color: "#f5f0e8",
+    border: "none",
+    borderRadius: "999px",
+    fontSize: "13px",
+    fontWeight: 700,
+    cursor: disabled ? "not-allowed" : "pointer",
+  }) as const;
+
+const secondaryButtonStyle = {
+  padding: "14px 24px",
+  backgroundColor: "white",
+  border: "1px solid #cccccc",
+  borderRadius: "999px",
+  fontSize: "13px",
+  fontWeight: 700,
+  cursor: "pointer",
+  color: "#0a0a0a",
+} as const;
+
+const secondaryLinkStyle = {
+  display: "inline-block",
+  padding: "14px 24px",
+  backgroundColor: "white",
+  border: "1px solid #cccccc",
+  borderRadius: "999px",
+  textDecoration: "none",
+  color: "#0a0a0a",
+  fontSize: "13px",
+  fontWeight: 700,
+} as const;

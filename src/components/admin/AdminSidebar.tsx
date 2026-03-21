@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { logoutAction } from "@/app/login/actions";
+import { logoutAction } from "@/lib/auth/admin-actions";
 import { adminNavigation } from "@/components/admin/admin-nav";
 
 export function AdminSidebar() {

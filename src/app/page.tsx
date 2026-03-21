@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import { HomePage } from "@/rebuild/public-pages";
 
-export default function HomePage() {
-  redirect("/login");
+export default function Page() {
+  return <HomePage />;
 }

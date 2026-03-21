@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "口コミ経営カルテ 管理者サイト",
-  description: "口コミ経営カルテの管理者サイト",
+  title: {
+    default: "口コミ経営カルテ",
+    template: "%s | 口コミ経営カルテ",
+  },
+  description:
+    "口コミ経営カルテのLP、ユーザーサイト、管理者サイトを分離した再構築版。",
 };
 
 export default function RootLayout({
@@ -13,9 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body className="min-h-screen bg-[#f6f1ea] text-stone-900 antialiased">
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

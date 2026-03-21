@@ -32,13 +32,13 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.mts",
     ".next/types/**/*.ts",
+    "**/*.mts",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    ".next",
-    "reviews-karte-next"
+    "reviews-karte-next",
+    "kuchikomi-karte.github.io"
   ]
 }
