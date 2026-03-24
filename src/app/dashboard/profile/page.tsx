@@ -2,17 +2,20 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { UserShell } from "@/components/dashboard/UserShell";
 
+const PlacesSearch = dynamic(
+  () => import("@/components/PlacesSearch").then((m) => m.PlacesSearch),
+  { ssr: false }
+);
+
 type BusinessType = "" | "hair" | "nail" | "esthetic" | "other";
-type SearchPlace = {
-  name: string;
-  formattedAddress: string;
-};
 type ProfileDraft = {
   salonName: string;
   businessType: BusinessType;
-  googleAddress: string;
+  placeId: string;
+  reviewUrl: string;
   otherUrls: string[];
 };
 
@@ -25,31 +28,15 @@ const bizLabel: Record<Exclude<BusinessType, "">, string> = {
   other: "その他",
 };
 
-const mockPlaces: SearchPlace[] = [
-  { name: "Luna Beauty Clinic", formattedAddress: "東京都港区南青山 1-2-3" },
-  { name: "Atelier MUSE", formattedAddress: "東京都渋谷区神宮前 4-5-6" },
-  { name: "Noble Smile Dental", formattedAddress: "東京都中央区銀座 7-8-9" },
-];
-
 function getStoredDraft(): ProfileDraft {
   if (typeof window === "undefined") {
-    return {
-      salonName: "",
-      businessType: "",
-      googleAddress: "",
-      otherUrls: [""],
-    };
+    return { salonName: "", businessType: "", placeId: "", reviewUrl: "", otherUrls: [""] };
   }
 
   const stored = window.localStorage.getItem(STORAGE_KEY);
 
   if (!stored) {
-    return {
-      salonName: "",
-      businessType: "",
-      googleAddress: "",
-      otherUrls: [""],
-    };
+    return { salonName: "", businessType: "", placeId: "", reviewUrl: "", otherUrls: [""] };
   }
 
   const draft = JSON.parse(stored) as Partial<ProfileDraft>;
@@ -57,7 +44,8 @@ function getStoredDraft(): ProfileDraft {
   return {
     salonName: draft.salonName ?? "",
     businessType: (draft.businessType as BusinessType) ?? "",
-    googleAddress: draft.googleAddress ?? "",
+    placeId: draft.placeId ?? "",
+    reviewUrl: draft.reviewUrl ?? "",
     otherUrls: draft.otherUrls?.length ? draft.otherUrls : [""],
   };
 }
@@ -68,40 +56,10 @@ export default function ProfilePage() {
   const [businessType, setBusinessType] = useState<BusinessType>(
     initialDraft.businessType,
   );
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState<SearchPlace[]>([]);
-  const [selectedPlace, setSelectedPlace] = useState<SearchPlace | null>(
-    initialDraft.googleAddress
-      ? {
-          name: initialDraft.salonName,
-          formattedAddress: initialDraft.googleAddress,
-        }
-      : null,
-  );
+  const [placeId, setPlaceId] = useState(initialDraft.placeId);
+  const [reviewUrl, setReviewUrl] = useState(initialDraft.reviewUrl);
   const [otherUrls, setOtherUrls] = useState(initialDraft.otherUrls);
   const [statusMessage, setStatusMessage] = useState("");
-
-  const handleSearch = () => {
-    setIsSearching(true);
-    setStatusMessage("");
-
-    window.setTimeout(() => {
-      const normalizedQuery = searchQuery.trim().toLowerCase();
-      const filteredPlaces = mockPlaces.filter((place) =>
-        place.name.toLowerCase().includes(normalizedQuery),
-      );
-      setSearchResults(filteredPlaces);
-      setIsSearching(false);
-    }, 350);
-  };
-
-  const handleSelectPlace = (place: SearchPlace) => {
-    setSelectedPlace(place);
-    setSalonName(place.name);
-    setSearchResults([]);
-    setStatusMessage("Google店舗候補を選択しました。");
-  };
 
   const addUrlField = () => {
     if (otherUrls.length < 3) {
@@ -117,7 +75,8 @@ export default function ProfilePage() {
     const draft: ProfileDraft = {
       salonName,
       businessType,
-      googleAddress: selectedPlace?.formattedAddress ?? "",
+      placeId,
+      reviewUrl,
       otherUrls,
     };
 
@@ -163,51 +122,16 @@ export default function ProfilePage() {
 
         <section style={panelStyle}>
           <label style={labelStyle}>Google店舗検索</label>
-          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="店舗名または地名を入力"
-              style={{ ...inputStyle, flex: 1, minWidth: "240px" }}
-            />
-            <button
-              onClick={handleSearch}
-              disabled={isSearching}
-              style={primaryButtonStyle(isSearching)}
-            >
-              {isSearching ? "検索中..." : "検索"}
-            </button>
-          </div>
-          <p style={{ margin: "12px 0 0", fontSize: "12px", color: "#888888" }}>
-            現在は候補確認用のローカル検索です。候補を選ぶと店舗情報に反映されます。
-          </p>
+          <PlacesSearch
+            onSelect={(data) => {
+              setSalonName(data.salonName);
+              setPlaceId(data.placeId);
+              setReviewUrl(data.reviewUrl);
+              setStatusMessage("Google店舗候補を選択しました。");
+            }}
+          />
 
-          {searchResults.length > 0 ? (
-            <div style={{ marginTop: "16px", display: "grid", gap: "10px" }}>
-              {searchResults.map((place) => (
-                <button
-                  key={place.name}
-                  onClick={() => handleSelectPlace(place)}
-                  style={{
-                    textAlign: "left",
-                    padding: "14px 16px",
-                    border: "1px solid #e5dfd4",
-                    borderRadius: "16px",
-                    backgroundColor: "white",
-                    cursor: "pointer",
-                  }}
-                >
-                  <div style={{ fontWeight: 700, color: "#0a0a0a" }}>{place.name}</div>
-                  <div style={{ marginTop: "4px", fontSize: "12px", color: "#666666" }}>
-                    {place.formattedAddress}
-                  </div>
-                </button>
-              ))}
-            </div>
-          ) : null}
-
-          {selectedPlace ? (
+          {placeId ? (
             <div
               style={{
                 marginTop: "16px",
@@ -217,9 +141,22 @@ export default function ProfilePage() {
               }}
             >
               <div style={{ fontWeight: 700, color: "#0a0a0a" }}>選択中のGoogle店舗</div>
-              <div style={{ marginTop: "6px", fontSize: "13px", color: "#666666" }}>
-                {selectedPlace.formattedAddress}
+              <div style={{ marginTop: "6px", fontSize: "13px", color: "#444444" }}>
+                {salonName}
               </div>
+              <a
+                href={reviewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-block",
+                  marginTop: "6px",
+                  fontSize: "12px",
+                  color: "#0070f3",
+                }}
+              >
+                口コミページを確認 →
+              </a>
             </div>
           ) : null}
         </section>
