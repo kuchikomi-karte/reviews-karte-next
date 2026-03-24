@@ -1,23 +1,33 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { UserShell } from "@/components/dashboard/UserShell";
 
 const PlacesSearch = dynamic(
-  () => import("@/components/PlacesSearch").then((m) => m.PlacesSearch),
-  { ssr: false }
+  () => import("@/components/PlacesSearch").then((module) => module.PlacesSearch),
+  { ssr: false },
 );
 
 type BusinessType = "" | "hair" | "nail" | "esthetic" | "other";
+
 type ProfileDraft = {
   salonName: string;
   businessType: BusinessType;
   placeId: string;
   reviewUrl: string;
   otherUrls: string[];
+};
+
+type UserProfileRow = {
+  id?: string;
+  email?: string;
+  salon_name?: string | null;
+  business_type?: string | null;
+  google_review_url?: string | null;
+  other_review_url_1?: string | null;
 };
 
 const STORAGE_KEY = "reviews-karte-profile-draft";
@@ -31,13 +41,24 @@ const bizLabel: Record<Exclude<BusinessType, "">, string> = {
 
 function getStoredDraft(): ProfileDraft {
   if (typeof window === "undefined") {
-    return { salonName: "", businessType: "", placeId: "", reviewUrl: "", otherUrls: [""] };
+    return {
+      salonName: "",
+      businessType: "",
+      placeId: "",
+      reviewUrl: "",
+      otherUrls: [""],
+    };
   }
 
   const stored = window.localStorage.getItem(STORAGE_KEY);
-
   if (!stored) {
-    return { salonName: "", businessType: "", placeId: "", reviewUrl: "", otherUrls: [""] };
+    return {
+      salonName: "",
+      businessType: "",
+      placeId: "",
+      reviewUrl: "",
+      otherUrls: [""],
+    };
   }
 
   const draft = JSON.parse(stored) as Partial<ProfileDraft>;
@@ -49,6 +70,42 @@ function getStoredDraft(): ProfileDraft {
     reviewUrl: draft.reviewUrl ?? "",
     otherUrls: draft.otherUrls?.length ? draft.otherUrls : [""],
   };
+}
+
+async function findProfileRow(
+  supabase: ReturnType<typeof createClientComponentClient>,
+  userId: string,
+  email?: string,
+) {
+  const { data: profileById, error: profileByIdError } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", userId)
+    .maybeSingle<UserProfileRow>();
+
+  if (profileByIdError) {
+    return { data: null, error: profileByIdError, source: "id" as const };
+  }
+
+  if (profileById) {
+    return { data: profileById, error: null, source: "id" as const };
+  }
+
+  if (!email) {
+    return { data: null, error: null, source: "missing" as const };
+  }
+
+  const { data: profileByEmail, error: profileByEmailError } = await supabase
+    .from("users")
+    .select("*")
+    .eq("email", email)
+    .maybeSingle<UserProfileRow>();
+
+  if (profileByEmailError) {
+    return { data: null, error: profileByEmailError, source: "email" as const };
+  }
+
+  return { data: profileByEmail, error: null, source: "email" as const };
 }
 
 export default function ProfilePage() {
@@ -67,24 +124,29 @@ export default function ProfilePage() {
   useEffect(() => {
     const loadProfile = async () => {
       const supabase = createClientComponentClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
-      const { data, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
-      if (error) {
-        console.error("Profile load error:", JSON.stringify(error));
+
+      const profileResult = await findProfileRow(supabase, user.id, user.email);
+      if (profileResult.error) {
+        console.error(
+          `Profile load by ${profileResult.source} error:`,
+          JSON.stringify(profileResult.error),
+        );
         return;
       }
-      if (data) {
-        if (data.salon_name) setSalonName(data.salon_name as string);
-        if (data.business_type) setBusinessType(data.business_type as BusinessType);
-        if (data.google_review_url) setReviewUrl(data.google_review_url as string);
-        if (data.other_review_url_1) setOtherUrls([data.other_review_url_1 as string]);
-      }
+
+      const data = profileResult.data;
+      if (!data) return;
+
+      if (data.salon_name) setSalonName(data.salon_name);
+      if (data.business_type) setBusinessType(data.business_type as BusinessType);
+      if (data.google_review_url) setReviewUrl(data.google_review_url);
+      if (data.other_review_url_1) setOtherUrls([data.other_review_url_1]);
     };
+
     void loadProfile();
   }, []);
 
@@ -100,34 +162,125 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     setSaving(true);
+
     try {
       const supabase = createClientComponentClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
         router.push("/login");
         return;
       }
+
       if (!user.email) {
         setStatusMessage("保存に失敗しました。メールアドレスを取得できませんでした。");
         return;
       }
+
       const profilePayload = {
-        id: user.id,
-        email: user.email,
         salon_name: salonName,
         business_type: businessType || null,
         google_review_url: reviewUrl || null,
         other_review_url_1: otherUrls[0] || null,
       };
-      const { error: saveError } = await supabase
+
+      const { data: existingById, error: existingByIdError } = await supabase
         .from("users")
-        .upsert(profilePayload, { onConflict: "id" });
-      if (saveError) {
-        console.error("Supabase save error:", JSON.stringify(saveError));
-        setStatusMessage(`保存に失敗しました。[${saveError.code}] ${saveError.message}`);
+        .select("id")
+        .eq("id", user.id)
+        .maybeSingle<{ id: string }>();
+
+      if (existingByIdError) {
+        console.error(
+          "Profile save lookup by id error:",
+          JSON.stringify(existingByIdError),
+        );
+        setStatusMessage(
+          `保存に失敗しました。[${existingByIdError.code}] ${existingByIdError.message}`,
+        );
         return;
       }
-      const draft: ProfileDraft = { salonName, businessType, placeId, reviewUrl, otherUrls };
+
+      if (existingById) {
+        const { error: updateByIdError } = await supabase
+          .from("users")
+          .update({
+            ...profilePayload,
+            email: user.email,
+          })
+          .eq("id", user.id);
+
+        if (updateByIdError) {
+          console.error(
+            "Profile update by id error:",
+            JSON.stringify(updateByIdError),
+          );
+          setStatusMessage(
+            `保存に失敗しました。[${updateByIdError.code}] ${updateByIdError.message}`,
+          );
+          return;
+        }
+      } else {
+        const { data: existingByEmail, error: existingByEmailError } =
+          await supabase
+            .from("users")
+            .select("id")
+            .eq("email", user.email)
+            .maybeSingle<{ id: string }>();
+
+        if (existingByEmailError) {
+          console.error(
+            "Profile save lookup by email error:",
+            JSON.stringify(existingByEmailError),
+          );
+          setStatusMessage(
+            `保存に失敗しました。[${existingByEmailError.code}] ${existingByEmailError.message}`,
+          );
+          return;
+        }
+
+        if (existingByEmail) {
+          const { error: updateByEmailError } = await supabase
+            .from("users")
+            .update(profilePayload)
+            .eq("email", user.email);
+
+          if (updateByEmailError) {
+            console.error(
+              "Profile update by email error:",
+              JSON.stringify(updateByEmailError),
+            );
+            setStatusMessage(
+              `保存に失敗しました。[${updateByEmailError.code}] ${updateByEmailError.message}`,
+            );
+            return;
+          }
+        } else {
+          const { error: insertError } = await supabase.from("users").insert({
+            id: user.id,
+            email: user.email,
+            ...profilePayload,
+          });
+
+          if (insertError) {
+            console.error("Profile insert error:", JSON.stringify(insertError));
+            setStatusMessage(
+              `保存に失敗しました。[${insertError.code}] ${insertError.message}`,
+            );
+            return;
+          }
+        }
+      }
+
+      const draft: ProfileDraft = {
+        salonName,
+        businessType,
+        placeId,
+        reviewUrl,
+        otherUrls,
+      };
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
       router.push("/dashboard");
     } catch (error) {
@@ -142,7 +295,7 @@ export default function ProfilePage() {
     <UserShell
       eyebrow="Profile"
       title="店舗情報の登録"
-      description="口コミ運用に必要な店舗情報、Google 店舗候補、その他口コミサイト URL を整理するページです。既存の登録フォーム構成を維持しつつ、保存導線を戻しています。"
+      description="口コミ活用に必要な店舗情報、Google口コミURL、その他の口コミサイトURLを登録します。"
     >
       <div style={{ display: "grid", gap: "24px" }}>
         <section style={panelStyle}>
@@ -158,24 +311,26 @@ export default function ProfilePage() {
           <div style={{ marginTop: "24px" }}>
             <label style={labelStyle}>業種</label>
             <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-              {(Object.keys(bizLabel) as Array<Exclude<BusinessType, "">>).map((type) => (
-                <label key={type} style={radioLabelStyle}>
-                  <input
-                    type="radio"
-                    name="businessType"
-                    checked={businessType === type}
-                    onChange={() => setBusinessType(type)}
-                    style={{ marginRight: "8px" }}
-                  />
-                  {bizLabel[type]}
-                </label>
-              ))}
+              {(Object.keys(bizLabel) as Array<Exclude<BusinessType, "">>).map(
+                (type) => (
+                  <label key={type} style={radioLabelStyle}>
+                    <input
+                      type="radio"
+                      name="businessType"
+                      checked={businessType === type}
+                      onChange={() => setBusinessType(type)}
+                      style={{ marginRight: "8px" }}
+                    />
+                    {bizLabel[type]}
+                  </label>
+                ),
+              )}
             </div>
           </div>
         </section>
 
         <section style={panelStyle}>
-          <label style={labelStyle}>Google店舗検索</label>
+          <label style={labelStyle}>Google店舗候補</label>
           <PlacesSearch
             onSelect={(data) => {
               setSalonName(data.salonName);
@@ -194,8 +349,16 @@ export default function ProfilePage() {
                 backgroundColor: "#f8f4ec",
               }}
             >
-              <div style={{ fontWeight: 700, color: "#0a0a0a" }}>選択中のGoogle店舗</div>
-              <div style={{ marginTop: "6px", fontSize: "13px", color: "#444444" }}>
+              <div style={{ fontWeight: 700, color: "#0a0a0a" }}>
+                選択中のGoogle店舗
+              </div>
+              <div
+                style={{
+                  marginTop: "6px",
+                  fontSize: "13px",
+                  color: "#444444",
+                }}
+              >
                 {salonName}
               </div>
               <a
@@ -209,14 +372,14 @@ export default function ProfilePage() {
                   color: "#0070f3",
                 }}
               >
-                口コミページを確認 →
+                GoogleレビューURLを確認
               </a>
             </div>
           ) : null}
         </section>
 
         <section style={panelStyle}>
-          <label style={labelStyle}>その他の口コミサイトURL</label>
+          <label style={labelStyle}>その他の口コミURL</label>
           <div style={{ display: "grid", gap: "12px" }}>
             {otherUrls.map((url, index) => (
               <div key={`${index}-${url}`} style={{ display: "flex", gap: "10px" }}>
@@ -260,11 +423,23 @@ export default function ProfilePage() {
           ) : null}
         </section>
 
-        {statusMessage && (
+        {statusMessage ? (
           <p style={{ fontSize: "13px", color: "#b64d4d" }}>{statusMessage}</p>
-        )}
-        <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
-          <button onClick={handleSave} disabled={saving} style={primaryButtonStyle(saving)}>
+        ) : null}
+
+        <div
+          style={{
+            display: "flex",
+            gap: "12px",
+            flexWrap: "wrap",
+            alignItems: "center",
+          }}
+        >
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            style={primaryButtonStyle(saving)}
+          >
             {saving ? "保存中..." : "登録"}
           </button>
         </div>

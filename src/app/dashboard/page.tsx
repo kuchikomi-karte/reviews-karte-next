@@ -44,7 +44,30 @@ export default function DashboardPage() {
         router.push(USER_LOGIN_PATH);
         return;
       }
-      const { data } = await supabase.from("users").select("*").eq("id", user.id).single();
+      const { data: profileById, error: profileByIdError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (profileByIdError) {
+        console.error("Dashboard profile load by id error:", profileByIdError);
+        setLoading(false);
+        return;
+      }
+      let data = profileById;
+      if (!data && user.email) {
+        const { data: profileByEmail, error: profileByEmailError } = await supabase
+          .from("users")
+          .select("*")
+          .eq("email", user.email)
+          .maybeSingle();
+        if (profileByEmailError) {
+          console.error("Dashboard profile load by email error:", profileByEmailError);
+          setLoading(false);
+          return;
+        }
+        data = profileByEmail;
+      }
       if (data) setProfile(data);
       setLoading(false);
     };
