@@ -1,100 +1,156 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 interface HeaderProps {
   onLogout: () => void
 }
 
 export default function Header({ onLogout }: HeaderProps) {
+  const pathname = usePathname()
+
+  const products = [
+    {
+      label: '口コミ経営カルテ',
+      href: '/dashboard',
+      active: true,        // 現在唯一のアクティブサービス
+      available: true,
+    },
+    {
+      label: '口コミSNSカルテ',
+      href: null,
+      active: false,
+      available: false,    // 将来実装
+    },
+  ]
+
   return (
-    <>
-      <style>{`
-        .header-inner {
-          position: relative;
-          z-index: 10;
-          background-color: #0a0a0a;
-          padding: 0 32px;
-          height: 56px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-        .header-brand {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          flex-shrink: 0;
-        }
-        .header-lab {
-          font-size: 10px;
-          letter-spacing: 0.2em;
-          color: #888;
-          font-family: 'Noto Sans JP', sans-serif;
-        }
-        .header-divider {
-          color: #444;
-          font-size: 12px;
-        }
-        .header-title {
-          font-family: 'Noto Serif JP', serif;
-          font-size: 14px;
-          letter-spacing: 0.2em;
-          color: #f5f0e8;
-          font-weight: 400;
-          white-space: nowrap;
-        }
-        .header-nav {
-          display: flex;
-          align-items: center;
-          gap: 24px;
-        }
-        .header-nav a, .header-nav button {
-          font-size: 11px;
-          letter-spacing: 0.12em;
-          color: #aaa;
-          text-decoration: none;
-          background: none;
-          border: none;
-          cursor: pointer;
-          font-family: 'Noto Sans JP', sans-serif;
-          padding: 0;
-          white-space: nowrap;
-        }
-
-        @media (max-width: 768px) {
-          .header-inner {
-            padding: 0 16px;
-            height: 52px;
-          }
-          .header-lab, .header-divider {
-            display: none;
-          }
-          .header-title {
-            font-size: 13px;
-          }
-          .header-nav {
-            gap: 14px;
-          }
-          .header-nav a, .header-nav button {
-            font-size: 10px;
-            letter-spacing: 0.05em;
-          }
-        }
-      `}</style>
-
-      <header className="header-inner">
-        <div className="header-brand">
-          <span className="header-lab">ai×me lab</span>
-          <span className="header-divider">|</span>
-          <span className="header-title">黒川聖羅カルテ</span>
+    <header style={{
+      backgroundColor: '#0a0a0a',
+      padding: '0 48px',
+      height: '64px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      position: 'relative',
+      zIndex: 10
+    }}>
+      {/* 左側：ブランド名 ＋ 商品ナビ */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
+        {/* ブランドロゴ部分 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginRight: '40px' }}>
+          <span style={{
+            fontSize: '10px',
+            letterSpacing: '0.3em',
+            color: '#888888',
+            fontFamily: 'Noto Sans JP, sans-serif',
+            fontWeight: 400
+          }}>
+            ai×me lab
+          </span>
+          <span style={{
+            fontSize: '11px',
+            letterSpacing: '0.05em',
+            color: '#888888',
+            fontFamily: 'Noto Sans JP, sans-serif',
+          }}>|</span>
+          <span style={{
+            fontSize: '16px',
+            letterSpacing: '0.15em',
+            color: '#f5f0e8',
+            fontFamily: 'Shippori Mincho, Noto Serif JP, serif',
+            fontWeight: 400
+          }}>
+            黒川聖羅カルテ
+          </span>
         </div>
-        <nav className="header-nav">
-          <Link href="/dashboard/profile">プロフィール設定</Link>
-          <Link href="/dashboard">口コミ経営カルテ</Link>
-          <button onClick={onLogout}>ログアウト</button>
+
+        {/* 商品ナビ：口コミ経営カルテ / 口コミSNSカルテ */}
+        <nav style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
+          {products.map((product) => {
+            const isCurrentPage = pathname?.startsWith('/dashboard') && product.href === '/dashboard'
+
+            if (product.available && product.href) {
+              return (
+                <Link
+                  key={product.label}
+                  href={product.href}
+                  style={{
+                    fontSize: '12px',
+                    letterSpacing: '0.1em',
+                    color: isCurrentPage ? '#c9a84c' : '#cccccc',
+                    textDecoration: 'none',
+                    fontFamily: 'Noto Sans JP, sans-serif',
+                    padding: '0 20px',
+                    height: '64px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    borderBottom: isCurrentPage ? '2px solid #c9a84c' : '2px solid transparent',
+                    boxSizing: 'border-box',
+                    transition: 'color 0.2s, border-color 0.2s',
+                  }}
+                >
+                  {product.label}
+                </Link>
+              )
+            } else {
+              return (
+                <span
+                  key={product.label}
+                  style={{
+                    fontSize: '12px',
+                    letterSpacing: '0.1em',
+                    color: '#444444',
+                    fontFamily: 'Noto Sans JP, sans-serif',
+                    padding: '0 20px',
+                    height: '64px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    borderBottom: '2px solid transparent',
+                    boxSizing: 'border-box',
+                    cursor: 'default',
+                    userSelect: 'none',
+                  }}
+                >
+                  {product.label}
+                  <span style={{
+                    fontSize: '9px',
+                    color: '#444444',
+                    marginLeft: '6px',
+                    fontFamily: 'Noto Sans JP, sans-serif',
+                    letterSpacing: '0.05em'
+                  }}>準備中</span>
+                </span>
+              )
+            }
+          })}
         </nav>
-      </header>
-    </>
+      </div>
+
+      {/* 右側：プロフィール設定 ＋ ログアウト */}
+      <nav style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+        <Link href="/dashboard/profile" style={{
+          fontSize: '12px',
+          letterSpacing: '0.1em',
+          color: '#cccccc',
+          textDecoration: 'none',
+          fontFamily: 'Noto Sans JP, sans-serif'
+        }}>
+          プロフィール設定
+        </Link>
+        <button onClick={onLogout} style={{
+          fontSize: '12px',
+          color: '#888888',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          fontFamily: 'Noto Sans JP, sans-serif',
+          letterSpacing: '0.1em'
+        }}>
+          ログアウト
+        </button>
+      </nav>
+    </header>
   )
 }
