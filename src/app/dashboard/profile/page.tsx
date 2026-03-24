@@ -107,8 +107,13 @@ export default function ProfilePage() {
         router.push("/login");
         return;
       }
+      if (!user.email) {
+        setStatusMessage("保存に失敗しました。メールアドレスを取得できませんでした。");
+        return;
+      }
       const profilePayload = {
         id: user.id,
+        email: user.email,
         salon_name: salonName,
         business_type: businessType || null,
         google_review_url: reviewUrl || null,
