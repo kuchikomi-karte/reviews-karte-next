@@ -69,7 +69,15 @@ export default function ProfilePage() {
       const supabase = createClientComponentClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { data } = await supabase.from("users").select("*").eq("id", user.id).single();
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (error) {
+        console.error("Profile load error:", JSON.stringify(error));
+        return;
+      }
       if (data) {
         if (data.salon_name) setSalonName(data.salon_name as string);
         if (data.business_type) setBusinessType(data.business_type as BusinessType);
@@ -99,14 +107,29 @@ export default function ProfilePage() {
         router.push("/login");
         return;
       }
-      const { error } = await supabase.from("users").upsert({
-        id: user.id,
-        email: user.email,
+      const profilePayload = {
         salon_name: salonName,
         business_type: businessType || null,
         google_review_url: reviewUrl || null,
         other_review_url_1: otherUrls[0] || null,
-      }, { onConflict: "id" });
+      };
+      const {
+        data: existingProfile,
+        error: existingProfileError,
+      } = await supabase.from("users").select("id").eq("id", user.id).maybeSingle();
+      if (existingProfileError) {
+        console.error("Profile existence check error:", JSON.stringify(existingProfileError));
+        setStatusMessage(`保存に失敗しました。[${existingProfileError.code}] ${existingProfileError.message}`);
+        return;
+      }
+      const saveQuery = existingProfile
+        ? supabase.from("users").update(profilePayload).eq("id", user.id)
+        : supabase.from("users").insert({
+            id: user.id,
+            email: user.email ?? null,
+            ...profilePayload,
+          });
+      const { error } = await saveQuery;
       if (error) {
         console.error("Supabase save error:", JSON.stringify(error));
         setStatusMessage(`保存に失敗しました。[${error.code}] ${error.message}`);
@@ -115,6 +138,9 @@ export default function ProfilePage() {
       const draft: ProfileDraft = { salonName, businessType, placeId, reviewUrl, otherUrls };
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
       router.push("/dashboard");
+    } catch (error) {
+      console.error("保存エラー詳細:", JSON.stringify(error));
+      setStatusMessage("保存に失敗しました。もう一度お試しください。");
     } finally {
       setSaving(false);
     }
