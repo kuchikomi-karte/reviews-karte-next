@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { UserShell } from "@/components/dashboard/UserShell";
 
@@ -59,7 +59,7 @@ export default function ProfilePage() {
   const [placeId, setPlaceId] = useState(initialDraft.placeId);
   const [reviewUrl, setReviewUrl] = useState(initialDraft.reviewUrl);
   const [otherUrls, setOtherUrls] = useState(initialDraft.otherUrls);
-  const [statusMessage, setStatusMessage] = useState("");
+  const router = useRouter();
 
   const addUrlField = () => {
     if (otherUrls.length < 3) {
@@ -81,7 +81,7 @@ export default function ProfilePage() {
     };
 
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
-    setStatusMessage("入力内容をこのブラウザに保存しました。");
+    router.push("/dashboard");
   };
 
   return (
@@ -208,14 +208,8 @@ export default function ProfilePage() {
 
         <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
           <button onClick={handleSave} style={primaryButtonStyle(false)}>
-            保存する
+            登録
           </button>
-          <Link href="/dashboard" style={secondaryLinkStyle}>
-            ダッシュボードへ戻る
-          </Link>
-          {statusMessage ? (
-            <span style={{ fontSize: "13px", color: "#666666" }}>{statusMessage}</span>
-          ) : null}
         </div>
       </div>
     </UserShell>
@@ -279,16 +273,4 @@ const secondaryButtonStyle = {
   fontWeight: 700,
   cursor: "pointer",
   color: "#0a0a0a",
-} as const;
-
-const secondaryLinkStyle = {
-  display: "inline-block",
-  padding: "14px 24px",
-  backgroundColor: "white",
-  border: "1px solid #cccccc",
-  borderRadius: "999px",
-  textDecoration: "none",
-  color: "#0a0a0a",
-  fontSize: "13px",
-  fontWeight: 700,
 } as const;
