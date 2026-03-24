@@ -101,14 +101,15 @@ export default function ProfilePage() {
       }
       const { error } = await supabase.from("users").upsert({
         id: user.id,
+        email: user.email,
         salon_name: salonName,
         business_type: businessType || null,
         google_review_url: reviewUrl || null,
         other_review_url_1: otherUrls[0] || null,
-      });
+      }, { onConflict: "id" });
       if (error) {
-        console.error("Supabase save error:", error);
-        setStatusMessage("保存に失敗しました。もう一度お試しください。");
+        console.error("Supabase save error:", JSON.stringify(error));
+        setStatusMessage(`保存に失敗しました。[${error.code}] ${error.message}`);
         return;
       }
       const draft: ProfileDraft = { salonName, businessType, placeId, reviewUrl, otherUrls };
