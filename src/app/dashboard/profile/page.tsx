@@ -108,31 +108,18 @@ export default function ProfilePage() {
         return;
       }
       const profilePayload = {
+        id: user.id,
         salon_name: salonName,
         business_type: businessType || null,
         google_review_url: reviewUrl || null,
         other_review_url_1: otherUrls[0] || null,
       };
-      const {
-        data: existingProfile,
-        error: existingProfileError,
-      } = await supabase.from("users").select("id").eq("id", user.id).maybeSingle();
-      if (existingProfileError) {
-        console.error("Profile existence check error:", JSON.stringify(existingProfileError));
-        setStatusMessage(`保存に失敗しました。[${existingProfileError.code}] ${existingProfileError.message}`);
-        return;
-      }
-      const saveQuery = existingProfile
-        ? supabase.from("users").update(profilePayload).eq("id", user.id)
-        : supabase.from("users").insert({
-            id: user.id,
-            email: user.email ?? null,
-            ...profilePayload,
-          });
-      const { error } = await saveQuery;
-      if (error) {
-        console.error("Supabase save error:", JSON.stringify(error));
-        setStatusMessage(`保存に失敗しました。[${error.code}] ${error.message}`);
+      const { error: saveError } = await supabase
+        .from("users")
+        .upsert(profilePayload, { onConflict: "id" });
+      if (saveError) {
+        console.error("Supabase save error:", JSON.stringify(saveError));
+        setStatusMessage(`保存に失敗しました。[${saveError.code}] ${saveError.message}`);
         return;
       }
       const draft: ProfileDraft = { salonName, businessType, placeId, reviewUrl, otherUrls };
