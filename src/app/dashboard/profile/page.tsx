@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { UserShell } from "@/components/dashboard/UserShell";
 
 const PlacesSearch = dynamic(
@@ -59,7 +60,25 @@ export default function ProfilePage() {
   const [placeId, setPlaceId] = useState(initialDraft.placeId);
   const [reviewUrl, setReviewUrl] = useState(initialDraft.reviewUrl);
   const [otherUrls, setOtherUrls] = useState(initialDraft.otherUrls);
+  const [statusMessage, setStatusMessage] = useState("");
+  const [saving, setSaving] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      const supabase = createClientComponentClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase.from("users").select("*").eq("id", user.id).single();
+      if (data) {
+        if (data.salon_name) setSalonName(data.salon_name as string);
+        if (data.business_type) setBusinessType(data.business_type as BusinessType);
+        if (data.google_review_url) setReviewUrl(data.google_review_url as string);
+        if (data.other_review_url_1) setOtherUrls([data.other_review_url_1 as string]);
+      }
+    };
+    void loadProfile();
+  }, []);
 
   const addUrlField = () => {
     if (otherUrls.length < 3) {
@@ -71,17 +90,33 @@ export default function ProfilePage() {
     setOtherUrls(otherUrls.filter((_, currentIndex) => currentIndex !== index));
   };
 
-  const handleSave = () => {
-    const draft: ProfileDraft = {
-      salonName,
-      businessType,
-      placeId,
-      reviewUrl,
-      otherUrls,
-    };
-
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
-    router.push("/dashboard");
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const supabase = createClientComponentClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+      const { error } = await supabase.from("users").upsert({
+        id: user.id,
+        salon_name: salonName,
+        business_type: businessType || null,
+        google_review_url: reviewUrl || null,
+        other_review_url_1: otherUrls[0] || null,
+      });
+      if (error) {
+        console.error("Supabase save error:", error);
+        setStatusMessage("保存に失敗しました。もう一度お試しください。");
+        return;
+      }
+      const draft: ProfileDraft = { salonName, businessType, placeId, reviewUrl, otherUrls };
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+      router.push("/dashboard");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -206,9 +241,12 @@ export default function ProfilePage() {
           ) : null}
         </section>
 
+        {statusMessage && (
+          <p style={{ fontSize: "13px", color: "#b64d4d" }}>{statusMessage}</p>
+        )}
         <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
-          <button onClick={handleSave} style={primaryButtonStyle(false)}>
-            登録
+          <button onClick={handleSave} disabled={saving} style={primaryButtonStyle(saving)}>
+            {saving ? "保存中..." : "登録"}
           </button>
         </div>
       </div>
