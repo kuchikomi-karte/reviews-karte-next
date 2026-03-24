@@ -67,7 +67,7 @@ export default function DashboardPage() {
     );
   }
 
-  const hasSalonInfo = Boolean(profile?.salon_name && profile?.google_review_url);
+  const hasSalonInfo = Boolean(profile?.salon_name);
   const isPremium = profile?.subscription_status === "premium";
   const displayName = profile?.name || "ゲスト";
 
@@ -96,18 +96,18 @@ export default function DashboardPage() {
               <div className={`${styles.salonCard} ${styles.salonCardRegistered}`}>
                 <div className={styles.salonCardHeader}>
                   <span className={styles.salonCardLabel}>登録済みの店舗情報</span>
-                  <Link href="/dashboard/profile" className={styles.salonCardEditLink}>編集する</Link>
                 </div>
                 <p className={styles.salonName}>{profile?.salon_name}</p>
                 <p className={styles.salonMeta}>業種: {bizLabel[profile?.business_type || ""] || profile?.business_type}</p>
                 <div className={styles.salonLinks}>
                   {profile?.google_review_url && (
-                    <a href={profile.google_review_url} target="_blank" rel="noopener noreferrer" className={styles.salonLink}>Google 店舗情報を見る</a>
+                    <a href={profile.google_review_url} target="_blank" rel="noopener noreferrer" className={styles.salonLink}>Google口コミ</a>
                   )}
                   {profile?.other_review_url_1 && (
-                    <a href={profile.other_review_url_1} target="_blank" rel="noopener noreferrer" className={styles.salonLink}>他サイトのURLを見る</a>
+                    <a href={profile.other_review_url_1} target="_blank" rel="noopener noreferrer" className={styles.salonLink}>{profile.other_review_url_1}</a>
                   )}
                 </div>
+                <Link href="/dashboard/profile" className={styles.registerButton}>店舗情報の変更</Link>
               </div>
             ) : (
               <div className={`${styles.salonCard} ${styles.salonCardEmpty}`}>
