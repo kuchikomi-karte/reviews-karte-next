@@ -1,198 +1,210 @@
-// デザイン確認専用ページ。認証不要・Drive API未使用・固定HTMLサンプル使用。
-// 本番コード（/dashboard/karte/[karteId]）には影響しません。
-import Header from '@/components/ui/Header'
-import KarteNav from '@/components/karte/KarteNav'
-import Link from 'next/link'
+import PreviewShell from '@/components/preview/PreviewShell'
 
-const MOCK_HTML = `
-<h1>2025年4月 口コミ経営カルテ</h1>
-<p style="font-size:12px;color:#888;margin-bottom:40px;">診断日：2025年4月28日　　対象店舗：サンプルヘアサロン 表参道店</p>
+const CARD: React.CSSProperties = {
+  backgroundColor: '#1a1a1a',
+  border: '1px solid #252525',
+  borderRadius: '12px',
+  overflow: 'hidden',
+}
 
-<h2 id="section-souhy">総評</h2>
-<p>
-  4月の口コミ傾向を総合すると、技術面への評価は引き続き高水準を維持しています。
-  一方で「待ち時間」に関するネガティブワードが前月比1.8倍に増加しており、
-  予約枠の逼迫が顧客体験に影響を与え始めているサインと読み取れます。
-</p>
-<p>
-  総合スコア：<strong>4.3 / 5.0</strong>（前月比 +0.1）<br/>
-  口コミ件数：<strong>38件</strong>（前月比 +4件）
-</p>
+const CARD_HEADER: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: '14px 20px',
+  borderBottom: '1px solid #1e1e1e',
+}
 
-<h2 id="section-kuchikomi">口コミ分析</h2>
-<h3>ポジティブワード Top5</h3>
-<table>
-  <thead><tr><th>キーワード</th><th>出現回数</th><th>前月比</th></tr></thead>
-  <tbody>
-    <tr><td>丁寧</td><td>18</td><td>+3</td></tr>
-    <tr><td>仕上がり</td><td>15</td><td>+2</td></tr>
-    <tr><td>スタッフ</td><td>13</td><td>±0</td></tr>
-    <tr><td>おすすめ</td><td>11</td><td>+1</td></tr>
-    <tr><td>また来たい</td><td>9</td><td>+2</td></tr>
-  </tbody>
-</table>
+const CARD_TITLE: React.CSSProperties = {
+  fontSize: '13px',
+  color: '#e0ddd6',
+  letterSpacing: '0.06em',
+}
 
-<h3>ネガティブワード Top3</h3>
-<table>
-  <thead><tr><th>キーワード</th><th>出現回数</th><th>前月比</th></tr></thead>
-  <tbody>
-    <tr><td>待ち時間</td><td>7</td><td style="color:#c0392b">+4</td></tr>
-    <tr><td>混んでいる</td><td>4</td><td style="color:#c0392b">+2</td></tr>
-    <tr><td>値段</td><td>2</td><td>±0</td></tr>
-  </tbody>
-</table>
-
-<h2 id="section-jikaku">自覚症状</h2>
-<p>
-  今月のヒアリングで確認された経営者の自覚症状は以下のとおりです。
-</p>
-<ul>
-  <li>土日の予約が2週間先まで埋まっており、新規顧客の取りこぼしが発生している</li>
-  <li>スタッフ1名が育休中であり、施術対応キャパが通常比 −20%</li>
-  <li>LINE予約のリマインドが機能しておらず、無断キャンセルが月3〜4件発生</li>
-</ul>
-
-<h2 id="section-monshin">自己問診</h2>
-<p>
-  今月の問診回答から抽出した経営課題の核心は<strong>「稼働率の最大化と顧客体験品質の両立」</strong>です。
-  予約の逼迫を「良い問題」と捉える一方で、待ち時間の増加が5つ星評価を4つ星に変える
-  潜在リスクであることを認識する必要があります。
-</p>
-
-<h2 id="section-shohousen">処方箋</h2>
-<p>以下3つの施策を優先度順に提示します。</p>
-<ol>
-  <li>
-    <strong>LINEリマインド自動化（優先度：高）</strong><br/>
-    予約2日前・当日朝の自動リマインドを設定。月3〜4件の無断キャンセルを半減させることで
-    実質稼働率を +5〜8% 改善できる試算。
-  </li>
-  <li>
-    <strong>予約枠の再設計（優先度：中）</strong><br/>
-    平日昼の空き枠に対して「平日限定割引」を設定し、土日の集中を分散させる。
-  </li>
-  <li>
-    <strong>口コミへの返信テンプレート整備（優先度：低〜中）</strong><br/>
-    待ち時間への言及がある口コミに対して「改善策を実施中」である旨を
-    積極的に返信し、誠実な対応姿勢をアピールする。
-  </li>
-</ol>
-
-<h2 id="section-action">アクション</h2>
-<table>
-  <thead><tr><th>施策</th><th>担当</th><th>期限</th><th>ステータス</th></tr></thead>
-  <tbody>
-    <tr><td>LINEリマインド設定</td><td>オーナー</td><td>5月10日</td><td>未着手</td></tr>
-    <tr><td>平日割引キャンペーン検討</td><td>オーナー＋黒川</td><td>5月末</td><td>検討中</td></tr>
-    <tr><td>口コミ返信テンプレート作成</td><td>黒川サポート</td><td>5月15日</td><td>未着手</td></tr>
-  </tbody>
-</table>
-`
-
-const CONTENT_STYLES = `
-  .kk-preview-karte {
-    min-height: 100vh;
-    background: linear-gradient(180deg, #f5f0e8 0%, #fbf8f2 180px, #ffffff 180px);
-  }
-  .kk-preview-wrap {
-    padding: 36px 24px 88px;
-  }
-  .kk-preview-content {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 40px 32px 56px;
-    background: #fff;
-    border: 0.5px solid #ddd5c8;
-    border-radius: 16px;
-    box-shadow: 0 18px 60px rgba(10,10,10,0.06);
-  }
-  .kk-preview-content [id] { scroll-margin-top: 144px; }
-  .kk-preview-content h1 {
-    font-family: Noto Serif JP, serif;
-    font-size: 30px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    color: #0a0a0a;
-    margin: 0 0 24px;
-  }
-  .kk-preview-content h2 {
-    font-family: Noto Serif JP, serif;
-    font-size: 22px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    color: #0a0a0a;
-    margin: 56px 0 16px;
-    padding-top: 8px;
-    border-top: 1px solid #f0e7d2;
-  }
-  .kk-preview-content h3 {
-    font-family: Noto Serif JP, serif;
-    font-size: 18px;
-    font-weight: 500;
-    color: #0a0a0a;
-    margin: 28px 0 12px;
-  }
-  .kk-preview-content p, .kk-preview-content li, .kk-preview-content td, .kk-preview-content th {
-    font-family: Noto Sans JP, sans-serif;
-    font-size: 14px;
-    line-height: 2;
-    letter-spacing: 0.03em;
-    color: #242424;
-  }
-  .kk-preview-content ul, .kk-preview-content ol { padding-left: 1.4em; }
-  .kk-preview-content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0 32px;
-  }
-  .kk-preview-content th, .kk-preview-content td {
-    padding: 12px 14px;
-    border: 0.5px solid #e6ddcf;
-    vertical-align: top;
-  }
-  .kk-preview-content th {
-    background: #faf6ee;
-    color: #5b4c22;
-    font-weight: 500;
-  }
-  .kk-preview-footer {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 0 24px 40px;
-    color: #7a746a;
-    font-family: Noto Sans JP, sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-align: center;
-  }
-  @media (max-width: 768px) {
-    .kk-preview-wrap { padding: 20px 12px 56px; }
-    .kk-preview-content { padding: 24px 18px 40px; border-radius: 12px; }
-    .kk-preview-content h1 { font-size: 24px; }
-    .kk-preview-content h2 { font-size: 19px; margin-top: 42px; }
-    .kk-preview-content p, .kk-preview-content li,
-    .kk-preview-content td, .kk-preview-content th { font-size: 13px; }
-  }
-`
+function Badge({ children, color = 'gold' }: { children: React.ReactNode; color?: 'gold' | 'orange' }) {
+  const isOrange = color === 'orange'
+  return (
+    <span style={{
+      fontSize: '11px',
+      color: isOrange ? '#e07040' : '#c9a84c',
+      backgroundColor: isOrange ? 'rgba(224,112,64,0.1)' : 'rgba(201,168,76,0.1)',
+      border: `1px solid ${isOrange ? 'rgba(224,112,64,0.3)' : 'rgba(201,168,76,0.25)'}`,
+      borderRadius: '20px',
+      padding: '3px 10px',
+    }}>
+      {children}
+    </span>
+  )
+}
 
 export default function PreviewKarteDemoPage() {
   return (
-    <div className="kk-preview-karte">
-      <style>{CONTENT_STYLES}</style>
-      <Header />
-      <KarteNav />
+    <PreviewShell activeItem="総評">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
-      <main className="kk-preview-wrap">
-        <div
-          className="kk-preview-content"
-          dangerouslySetInnerHTML={{ __html: MOCK_HTML }}
-        />
-      </main>
+        {/* 総評カード */}
+        <div id="section-souhy" style={{
+          ...CARD,
+          padding: '24px',
+          display: 'flex',
+          gap: '20px',
+          alignItems: 'flex-start',
+        }}>
+          <div style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '50%',
+            border: '1.5px solid #c9a84c',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#c9a84c',
+            fontSize: '11px',
+            fontFamily: 'Shippori Mincho, serif',
+            flexShrink: 0,
+          }}>
+            聖羅
+          </div>
+          <div>
+            <p style={{ fontSize: '11px', color: '#555', letterSpacing: '0.06em', marginBottom: '10px' }}>
+              黒川聖羅 — 総評 / 2025年4月のカルテ
+            </p>
+            <p style={{ fontSize: '14px', color: '#e8e2d4', lineHeight: 1.9, letterSpacing: '0.04em' }}>
+              口コミの平均評価は4.1ですが、★3以下が全体の23%を占めています。
+              未返信が3件あり、これが新規顧客の信頼獲得を妨げている可能性があります。
+              まず返信対応を優先してください。
+            </p>
+          </div>
+        </div>
 
-      <footer className="kk-preview-footer">
-        © ai×me lab / 黒川聖羅カルテ
-        <Link href="/preview/dashboard" style={{ color: '#c9a84c', marginLeft: '20px' }}>← ダッシュボードに戻る</Link>
-      </footer>
-    </div>
+        {/* 口コミ投稿分析 */}
+        <div id="section-kuchikomi" style={CARD}>
+          <div style={CARD_HEADER}>
+            <span style={CARD_TITLE}>口コミ投稿分析</span>
+            <Badge>計42件</Badge>
+          </div>
+          <div style={{ padding: '20px 24px' }}>
+            {[
+              { star: '★5', count: 18, pct: 70 },
+              { star: '★4', count: 12, pct: 47 },
+              { star: '★3', count: 7,  pct: 27 },
+            ].map((row) => (
+              <div key={row.star} style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+                <span style={{ fontSize: '12px', color: '#666', width: '26px', flexShrink: 0 }}>{row.star}</span>
+                <div style={{ flex: 1, height: '6px', backgroundColor: '#222', borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ width: `${row.pct}%`, height: '100%', backgroundColor: '#c9a84c', borderRadius: '3px' }} />
+                </div>
+                <span style={{ fontSize: '12px', color: '#666', width: '22px', textAlign: 'right', flexShrink: 0 }}>{row.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 未返信の口コミ */}
+        <div id="section-action" style={CARD}>
+          <div style={CARD_HEADER}>
+            <span style={CARD_TITLE}>未返信の口コミ</span>
+            <Badge color="orange">3件</Badge>
+          </div>
+          <div style={{ padding: '20px 24px' }}>
+            <div style={{ color: '#c9a84c', fontSize: '14px', marginBottom: '6px' }}>★★★★</div>
+            <p style={{ fontSize: '13px', color: '#c0bbb2', lineHeight: 1.8, marginBottom: '14px', letterSpacing: '0.04em' }}>
+              スタッフの対応がとても丁寧でまた来たいと思いました
+            </p>
+            <div style={{
+              backgroundColor: '#141414',
+              border: '1px solid #282828',
+              borderRadius: '8px',
+              padding: '16px 18px',
+            }}>
+              <p style={{ fontSize: '10px', color: '#555', letterSpacing: '0.18em', marginBottom: '8px' }}>返信例</p>
+              <p style={{ fontSize: '13px', color: '#777', lineHeight: 1.8, letterSpacing: '0.03em' }}>
+                この度はご来店いただきありがとうございます。スタッフの対応が伝わり大変嬉しく思います。またのご来店をお待ちしております。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* 自覚症状 */}
+        <div id="section-jikaku" style={CARD}>
+          <div style={CARD_HEADER}>
+            <span style={CARD_TITLE}>自覚症状</span>
+          </div>
+          <div style={{ padding: '4px 0' }}>
+            {[
+              '土日の予約が2週間先まで埋まっており、新規顧客の取りこぼしが発生している',
+              'スタッフ1名が育休中であり、施術対応キャパが通常比 −20%',
+              'LINE予約のリマインドが機能しておらず、無断キャンセルが月3〜4件発生',
+            ].map((item, i) => (
+              <div key={i} style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '14px',
+                padding: '14px 20px',
+                borderBottom: i < 2 ? '1px solid #1c1c1c' : 'none',
+              }}>
+                <span style={{
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '50%',
+                  border: '1px solid #2e2e2e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '10px',
+                  color: '#555',
+                  flexShrink: 0,
+                  marginTop: '2px',
+                }}>
+                  {i + 1}
+                </span>
+                <p style={{ fontSize: '13px', color: '#888', lineHeight: 1.8, letterSpacing: '0.03em' }}>{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 処方箋 */}
+        <div id="section-shohousen" style={CARD}>
+          <div style={CARD_HEADER}>
+            <span style={CARD_TITLE}>処方箋</span>
+          </div>
+          <div style={{ padding: '4px 0' }}>
+            {[
+              { priority: '優先', highlight: true,  title: 'LINEリマインド自動化',      body: '予約2日前・当日朝の自動リマインドを設定。無断キャンセルを半減させ、実質稼働率を +5〜8% 改善。' },
+              { priority: '推奨', highlight: false, title: '予約枠の再設計',             body: '平日昼の空き枠に「平日限定割引」を設定し、土日への集中を分散させる。' },
+              { priority: '検討', highlight: false, title: '口コミ返信テンプレート整備', body: '待ち時間への言及がある口コミに対して改善策を実施中である旨を積極的に返信する。' },
+            ].map((item, i) => (
+              <div key={i} style={{
+                display: 'flex',
+                gap: '16px',
+                alignItems: 'flex-start',
+                padding: '16px 20px',
+                borderBottom: i < 2 ? '1px solid #1c1c1c' : 'none',
+              }}>
+                <span style={{
+                  fontSize: '10px',
+                  color: item.highlight ? '#c9a84c' : '#444',
+                  border: `1px solid ${item.highlight ? 'rgba(201,168,76,0.4)' : '#2a2a2a'}`,
+                  borderRadius: '4px',
+                  padding: '2px 8px',
+                  flexShrink: 0,
+                  marginTop: '2px',
+                  letterSpacing: '0.08em',
+                  whiteSpace: 'nowrap',
+                }}>
+                  {item.priority}
+                </span>
+                <div>
+                  <p style={{ fontSize: '13px', color: '#c0bbb2', letterSpacing: '0.04em', marginBottom: '6px' }}>{item.title}</p>
+                  <p style={{ fontSize: '12px', color: '#666', lineHeight: 1.8, letterSpacing: '0.03em' }}>{item.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </PreviewShell>
   )
 }

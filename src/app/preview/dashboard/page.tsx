@@ -1,178 +1,170 @@
-// デザイン確認専用ページ。認証不要・モックデータのみ使用。
-// 本番コード（/dashboard）には影響しません。
 import Link from 'next/link'
-import Header from '@/components/ui/Header'
+import PreviewShell from '@/components/preview/PreviewShell'
 
-const MOCK_KARTE = [
-  { id: 'mock-1', title: '2025年4月のカルテ', period: '2025年4月1日〜4月30日', created_at: '2025-04-28T10:00:00Z' },
-  { id: 'mock-2', title: '2025年3月のカルテ', period: '2025年3月1日〜3月31日', created_at: '2025-03-31T10:00:00Z' },
-  { id: 'mock-3', title: '2025年2月のカルテ', period: '2025年2月1日〜2月28日', created_at: '2025-02-28T10:00:00Z' },
-]
+const CARD: React.CSSProperties = {
+  backgroundColor: '#1a1a1a',
+  border: '1px solid #252525',
+  borderRadius: '12px',
+  overflow: 'hidden',
+}
+
+const CARD_HEADER: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: '14px 20px',
+  borderBottom: '1px solid #1e1e1e',
+}
+
+const CARD_TITLE: React.CSSProperties = {
+  fontSize: '13px',
+  color: '#e0ddd6',
+  letterSpacing: '0.06em',
+}
+
+function Badge({ children, color = 'gold' }: { children: React.ReactNode; color?: 'gold' | 'orange' }) {
+  const isOrange = color === 'orange'
+  return (
+    <span style={{
+      fontSize: '11px',
+      color: isOrange ? '#e07040' : '#c9a84c',
+      backgroundColor: isOrange ? 'rgba(224,112,64,0.1)' : 'rgba(201,168,76,0.1)',
+      border: `1px solid ${isOrange ? 'rgba(224,112,64,0.3)' : 'rgba(201,168,76,0.25)'}`,
+      borderRadius: '20px',
+      padding: '3px 10px',
+      letterSpacing: '0.04em',
+    }}>
+      {children}
+    </span>
+  )
+}
 
 export default function PreviewDashboardPage() {
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8' }}>
-      <Header />
+    <PreviewShell>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
-      <main style={{ padding: '48px', boxSizing: 'border-box', maxWidth: '960px', margin: '0 auto' }}>
-        {/* ページタイトル */}
-        <div style={{ marginBottom: '40px' }}>
-          <h1 style={{
-            fontFamily: 'Noto Serif JP, serif',
-            fontSize: '28px',
-            fontWeight: 400,
-            letterSpacing: '0.1em',
-            color: '#0a0a0a',
-            marginBottom: '16px',
-          }}>
-            黒川様 のカルテ
-          </h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
-            <span style={{
-              padding: '6px 16px',
-              border: '1px solid #0a0a0a',
-              fontSize: '11px',
-              letterSpacing: '0.15em',
-              color: '#0a0a0a',
-              fontFamily: 'Noto Sans JP, sans-serif',
-            }}>
-              プレミアムプラン
-            </span>
-          </div>
-
-          {/* 店舗カード */}
+        {/* 総評サマリーカード */}
+        <div style={{
+          ...CARD,
+          padding: '24px',
+          display: 'flex',
+          gap: '20px',
+          alignItems: 'flex-start',
+        }}>
           <div style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '50%',
+            border: '1.5px solid #c9a84c',
             display: 'flex',
-            alignItems: 'flex-start',
-            gap: '40px',
-            marginBottom: '40px',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#c9a84c',
+            fontSize: '11px',
+            fontFamily: 'Shippori Mincho, serif',
+            flexShrink: 0,
           }}>
-            <div style={{
-              padding: '24px 28px',
-              border: '1px solid #ddd8ce',
-              width: '50%',
-              boxSizing: 'border-box',
-              backgroundColor: '#fff',
-            }}>
-              <div style={{ fontSize: '10px', letterSpacing: '0.2em', color: '#888', fontFamily: 'Noto Sans JP, sans-serif', marginBottom: '12px' }}>
-                登録済みの店舗情報
-              </div>
-              <p style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '18px', color: '#0a0a0a', marginBottom: '8px' }}>
-                サンプルヘアサロン 表参道店
-              </p>
-              <p style={{ fontSize: '12px', color: '#888', marginBottom: '16px', fontFamily: 'Noto Sans JP, sans-serif' }}>
-                業種: ヘアサロン
-              </p>
-              <span style={{
-                display: 'inline-block',
-                padding: '10px 24px',
-                backgroundColor: '#c9a84c',
-                color: '#0a0a0a',
-                fontSize: '12px',
-                letterSpacing: '0.1em',
-                fontFamily: 'Noto Sans JP, sans-serif',
-              }}>
-                店舗情報の変更
-              </span>
-            </div>
-
-            <div style={{ flex: 1, borderLeft: '3px solid #c9a84c', paddingLeft: '32px', paddingTop: '8px' }}>
-              <p style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '13px', fontWeight: 700, lineHeight: 2, letterSpacing: '0.08em', color: '#0a0a0a', marginBottom: '8px' }}>
-                口コミの状況を客観的に見て、次に集中すべきポイントを明確にする。
-              </p>
-              <p style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '13px', fontWeight: 700, lineHeight: 2, color: '#0a0a0a', marginBottom: '4px' }}>
-                返信案・週次書類・店舗情報の 3 つを同じ画面で捉えるように設計しています。
-              </p>
-              <p style={{ fontSize: '11px', letterSpacing: '0.25em', color: '#c9a84c', fontWeight: 700 }}>―― 黒川聖羅</p>
-            </div>
+            聖羅
           </div>
-
-          {/* メニューグリッド */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '48px' }}>
-            {[
-              { title: 'AI口コミ返信案', desc: '口コミ本文から返信案の下書きを生成します。', status: 'プレミアム利用中', active: true },
-              { title: '週次レポート', desc: '今週の口コミ傾向と改善ポイントを確認します。', status: '利用可能', active: true },
-              { title: '月次レポート', desc: '月間の口コミデータを分析したレポートです。', status: '利用可能', active: true },
-              { title: '経営相談', desc: '担当上長への相談内容を送信し処理メモを確認します。', status: '相談状況を確認', active: false },
-            ].map((item) => (
-              <div key={item.title} style={{
-                padding: '32px',
-                border: '1px solid #ddd8ce',
-                minHeight: '160px',
-                backgroundColor: '#fff',
-                boxSizing: 'border-box',
-              }}>
-                <h3 style={{ fontFamily: 'Noto Serif JP, serif', fontSize: '16px', fontWeight: 500, letterSpacing: '0.1em', color: '#0a0a0a', marginBottom: '10px' }}>
-                  {item.title}
-                </h3>
-                <p style={{ fontSize: '12px', color: '#888', lineHeight: 1.8, marginBottom: '12px', fontFamily: 'Noto Sans JP, sans-serif' }}>
-                  {item.desc}
-                </p>
-                <p style={{ fontSize: '11px', fontFamily: 'Noto Sans JP, sans-serif', color: item.active ? '#c9a84c' : '#888' }}>
-                  {item.status}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* カルテ履歴 */}
-          <h2 style={{
-            fontFamily: 'Noto Serif JP, serif',
-            fontSize: '18px',
-            fontWeight: 400,
-            letterSpacing: '0.12em',
-            color: '#0a0a0a',
-            marginBottom: '20px',
-          }}>
-            カルテ履歴
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
-            {MOCK_KARTE.map((karte) => (
-              <div key={karte.id} style={{
-                backgroundColor: '#fff',
-                border: '0.5px solid #ddd5c8',
-                borderRadius: '10px',
-                padding: '24px',
-                boxSizing: 'border-box',
-              }}>
-                <p style={{ fontSize: '15px', fontFamily: 'Noto Serif JP, serif', color: '#0a0a0a', letterSpacing: '0.06em', marginBottom: '8px' }}>
-                  {karte.title}
-                </p>
-                <p style={{ fontSize: '12px', color: '#888', marginBottom: '4px', fontFamily: 'Noto Sans JP, sans-serif' }}>
-                  対象期間: {karte.period}
-                </p>
-                <p style={{ fontSize: '11px', color: '#aaa', marginBottom: '20px', fontFamily: 'Noto Sans JP, sans-serif' }}>
-                  診断日: {new Date(karte.created_at).toLocaleDateString('ja-JP')}
-                </p>
-                <Link href="/preview/karte-demo" style={{
-                  display: 'inline-block',
-                  fontSize: '12px',
-                  letterSpacing: '0.1em',
-                  color: '#c9a84c',
-                  textDecoration: 'none',
-                  border: '0.5px solid #c9a84c',
-                  padding: '8px 20px',
-                  borderRadius: '4px',
-                  fontFamily: 'Noto Sans JP, sans-serif',
-                }}>
-                  カルテを閲覧
-                </Link>
-              </div>
-            ))}
-          </div>
-
-          {/* 確認用リンク集 */}
-          <div style={{ marginTop: '48px', padding: '20px 24px', backgroundColor: '#f0e8d8', borderRadius: '8px', border: '0.5px solid #ddd5c8' }}>
-            <p style={{ fontSize: '11px', color: '#888', letterSpacing: '0.1em', fontFamily: 'Noto Sans JP, sans-serif', marginBottom: '12px' }}>
-              ▼ 他のプレビューページ
+          <div>
+            <p style={{ fontSize: '11px', color: '#555', letterSpacing: '0.06em', marginBottom: '10px' }}>
+              黒川聖羅 — 総評 / 2025年4月のカルテ
             </p>
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <Link href="/preview/monshin" style={{ fontSize: '13px', color: '#c9a84c', fontFamily: 'Noto Sans JP, sans-serif' }}>自己問診フォーム →</Link>
-              <Link href="/preview/karte-demo" style={{ fontSize: '13px', color: '#c9a84c', fontFamily: 'Noto Sans JP, sans-serif' }}>カルテ詳細レイアウト →</Link>
+            <p style={{ fontSize: '14px', color: '#e8e2d4', lineHeight: 1.9, letterSpacing: '0.04em' }}>
+              口コミの平均評価は4.1ですが、★3以下が全体の23%を占めています。
+              未返信が3件あり、これが新規顧客の信頼獲得を妨げている可能性があります。
+              まず返信対応を優先してください。
+            </p>
+          </div>
+        </div>
+
+        {/* 2カラム：口コミ分析 + 小カード */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          {/* 口コミ投稿分析 */}
+          <div style={CARD}>
+            <div style={CARD_HEADER}>
+              <span style={CARD_TITLE}>口コミ投稿分析</span>
+              <Badge>計42件</Badge>
+            </div>
+            <div style={{ padding: '20px 24px' }}>
+              {[
+                { star: '★5', count: 18, pct: 70 },
+                { star: '★4', count: 12, pct: 47 },
+                { star: '★3', count: 7,  pct: 27 },
+              ].map((row) => (
+                <div key={row.star} style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                  <span style={{ fontSize: '12px', color: '#666', width: '26px', flexShrink: 0 }}>{row.star}</span>
+                  <div style={{ flex: 1, height: '6px', backgroundColor: '#222', borderRadius: '3px', overflow: 'hidden' }}>
+                    <div style={{ width: `${row.pct}%`, height: '100%', backgroundColor: '#c9a84c', borderRadius: '3px' }} />
+                  </div>
+                  <span style={{ fontSize: '12px', color: '#666', width: '20px', textAlign: 'right', flexShrink: 0 }}>{row.count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 右列 */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ ...CARD, padding: '22px', flex: 1 }}>
+              <p style={{ fontSize: '11px', color: '#555', letterSpacing: '0.08em', marginBottom: '12px' }}>未返信の口コミ</p>
+              <p style={{ fontSize: '36px', color: '#c9a84c', fontFamily: 'Shippori Mincho, serif', lineHeight: 1 }}>
+                3<span style={{ fontSize: '14px', color: '#555', marginLeft: '6px' }}>件</span>
+              </p>
+            </div>
+            <div style={{ ...CARD, padding: '22px', flex: 1 }}>
+              <p style={{ fontSize: '11px', color: '#555', letterSpacing: '0.08em', marginBottom: '10px' }}>今月の改善ポイント</p>
+              <p style={{ fontSize: '13px', color: '#888', lineHeight: 1.8, letterSpacing: '0.03em' }}>
+                待ち時間への言及が前月比+4件。予約枠の分散と返信テンプレート整備を推奨。
+              </p>
             </div>
           </div>
         </div>
-      </main>
-    </div>
+
+        {/* カルテ履歴 */}
+        <div style={CARD}>
+          <div style={CARD_HEADER}>
+            <span style={CARD_TITLE}>カルテ履歴</span>
+          </div>
+          {[
+            { title: '2025年4月のカルテ', period: '2025年4月1日〜4月30日', date: '2025/04/28' },
+            { title: '2025年3月のカルテ', period: '2025年3月1日〜3月31日', date: '2025/03/31' },
+            { title: '2025年2月のカルテ', period: '2025年2月1日〜2月28日', date: '2025/02/28' },
+          ].map((karte, i) => (
+            <Link
+              key={karte.title}
+              href="/preview/karte-demo"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '16px 20px',
+                borderBottom: i < 2 ? '1px solid #1c1c1c' : 'none',
+                textDecoration: 'none',
+              }}
+            >
+              <div>
+                <p style={{ fontSize: '13px', color: '#e0ddd6', letterSpacing: '0.06em', marginBottom: '4px' }}>{karte.title}</p>
+                <p style={{ fontSize: '11px', color: '#444', letterSpacing: '0.04em' }}>{karte.period}</p>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <span style={{ fontSize: '11px', color: '#444' }}>{karte.date}</span>
+                <span style={{
+                  fontSize: '11px',
+                  color: '#c9a84c',
+                  border: '1px solid rgba(201,168,76,0.3)',
+                  borderRadius: '4px',
+                  padding: '4px 14px',
+                  letterSpacing: '0.06em',
+                }}>
+                  閲覧
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+      </div>
+    </PreviewShell>
   )
 }
