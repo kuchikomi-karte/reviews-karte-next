@@ -19,6 +19,13 @@ type Profile = {
   subscription_status?: string;
 };
 
+type KarteItem = {
+  id: string;
+  title: string;
+  period?: string;
+  created_at: string;
+};
+
 const bizLabel: Record<string, string> = {
   hair: "ヘアサロン",
   nail: "ネイルサロン",
@@ -28,6 +35,7 @@ const bizLabel: Record<string, string> = {
 
 export default function DashboardPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [karteList, setKarteList] = useState<KarteItem[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const hasSupabaseConfig = hasUserAuthConfig();
@@ -69,6 +77,16 @@ export default function DashboardPage() {
         data = profileByEmail;
       }
       if (data) setProfile(data);
+
+      // カルテ履歴取得
+      const { data: karteData } = await supabase
+        .from('karte')
+        .select('id, title, period, created_at')
+        .eq('user_id', user.id)
+        .eq('status', 'published')
+        .order('created_at', { ascending: false });
+      if (karteData) setKarteList(karteData);
+
       setLoading(false);
     };
     void loadProfile();
@@ -162,6 +180,68 @@ export default function DashboardPage() {
             </Link>
           ))}
         </div>
+
+        {/* カルテ履歴 */}
+        {karteList.length > 0 && (
+          <div style={{ marginTop: '48px' }}>
+            <h2 style={{
+              fontFamily: 'Noto Serif JP, serif',
+              fontSize: '18px',
+              fontWeight: 400,
+              letterSpacing: '0.12em',
+              color: '#0a0a0a',
+              marginBottom: '20px',
+            }}>
+              カルテ履歴
+            </h2>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+              gap: '16px',
+            }}>
+              {karteList.map((karte) => (
+                <div key={karte.id} style={{
+                  backgroundColor: '#fff',
+                  border: '0.5px solid #ddd5c8',
+                  borderRadius: '10px',
+                  padding: '24px',
+                  boxSizing: 'border-box',
+                }}>
+                  <p style={{
+                    fontSize: '15px',
+                    fontFamily: 'Noto Serif JP, serif',
+                    color: '#0a0a0a',
+                    letterSpacing: '0.06em',
+                    marginBottom: '8px',
+                  }}>
+                    {karte.title}
+                  </p>
+                  {karte.period && (
+                    <p style={{ fontSize: '12px', color: '#888', marginBottom: '4px', fontFamily: 'Noto Sans JP, sans-serif' }}>
+                      対象期間: {karte.period}
+                    </p>
+                  )}
+                  <p style={{ fontSize: '11px', color: '#aaa', marginBottom: '20px', fontFamily: 'Noto Sans JP, sans-serif' }}>
+                    診断日: {new Date(karte.created_at).toLocaleDateString('ja-JP')}
+                  </p>
+                  <Link href={`/dashboard/karte/${karte.id}`} style={{
+                    display: 'inline-block',
+                    fontSize: '12px',
+                    letterSpacing: '0.1em',
+                    color: '#c9a84c',
+                    textDecoration: 'none',
+                    border: '0.5px solid #c9a84c',
+                    padding: '8px 20px',
+                    borderRadius: '4px',
+                    fontFamily: 'Noto Sans JP, sans-serif',
+                  }}>
+                    カルテを閲覧
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
