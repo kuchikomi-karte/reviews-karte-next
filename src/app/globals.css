@@ -39,3 +39,24 @@ body {
 a {
   color: inherit;
 }
+
+/* ── Preview レスポンシブ ─────────────────────── */
+@media (max-width: 640px) {
+  .preview-hd-top { padding: 0 16px !important; }
+  .preview-hd-nav { padding: 0 8px !important; }
+  .preview-karte-menu { padding: 0 8px !important; }
+  .preview-hero-content { padding: 24px 16px !important; }
+  .preview-hero-salon { font-size: 18px !important; }
+  .preview-sidebar { display: none !important; }
+  .preview-content { padding: 20px 14px 60px !important; }
+  .preview-sec-body { padding: 14px !important; }
+}
+
+/* textarea フォーカスリング（preview） */
+.preview-textarea:focus {
+  border-color: rgba(201, 168, 76, 0.5) !important;
+  outline: none;
+}
+.preview-textarea::placeholder {
+  color: #444;
+}

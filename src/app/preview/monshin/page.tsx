@@ -31,109 +31,101 @@ export default function PreviewMonshinPage() {
     <PreviewShell activeItem="7要素診断">
       {/* Page heading */}
       <div style={{ marginBottom: '24px' }}>
-        <p style={{ fontSize: '10px', letterSpacing: '0.25em', color: '#444', marginBottom: '8px' }}>
-          SELF CHECK
-        </p>
         <h1 style={{
-          fontFamily: 'Shippori Mincho, Noto Serif JP, serif',
+          fontFamily: 'var(--font-shippori-mincho), Shippori Mincho, Noto Serif JP, serif',
           fontSize: '20px',
           fontWeight: 500,
           letterSpacing: '0.1em',
-          color: '#e8e2d4',
+          color: '#1a1a1a',
           marginBottom: '8px',
         }}>
           自己問診
         </h1>
-        <p style={{ fontSize: '12px', color: '#555', lineHeight: 1.8, letterSpacing: '0.04em' }}>
-          7つの質問に答えることで、経営課題の輪郭を明確にします。
-        </p>
       </div>
 
       {/* Questions */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {QUESTIONS.map((q, i) => (
           <div key={q.key} style={{
             backgroundColor: '#1a1a1a',
-            border: '1px solid #252525',
-            borderRadius: '12px',
-            overflow: 'hidden',
+            border: '0.5px solid #2a2a2a',
+            borderRadius: '10px',
+            padding: '16px 18px',
           }}>
-            {/* Card header */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '12px 20px',
-              borderBottom: '1px solid #1e1e1e',
-            }}>
+            {/* Axis badge + question number */}
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
               <span style={{
-                fontSize: '10px',
-                letterSpacing: '0.12em',
-                color: '#c9a84c',
-                border: '1px solid rgba(201,168,76,0.3)',
-                borderRadius: '4px',
+                display: 'inline-block',
+                fontSize: '9px',
                 padding: '2px 8px',
-                whiteSpace: 'nowrap',
+                borderRadius: '4px',
+                background: 'rgba(201,168,76,0.15)',
+                border: '0.5px solid rgba(201,168,76,0.35)',
+                color: '#c9a84c',
+                marginRight: '8px',
+                letterSpacing: '0.08em',
               }}>
                 {q.axis}
               </span>
-              <span style={{ fontSize: '11px', color: '#333', letterSpacing: '0.04em' }}>
-                Q{i + 1}
-              </span>
+              <span style={{ fontSize: '10px', color: '#555' }}>Q{i + 1}</span>
             </div>
 
-            {/* Card body */}
-            <div style={{ padding: '16px 20px' }}>
-              <p style={{
+            {/* Question text */}
+            <p style={{
+              fontSize: '13px',
+              color: '#c8bfb0',
+              marginBottom: '10px',
+              lineHeight: 1.7,
+              letterSpacing: '0.04em',
+            }}>
+              {q.text}
+            </p>
+
+            {/* Textarea */}
+            <textarea
+              rows={3}
+              value={answers[q.key]}
+              onChange={(e) => setAnswers((prev) => ({ ...prev, [q.key]: e.target.value }))}
+              placeholder="ここに入力してください..."
+              style={{
+                width: '100%',
+                background: '#111',
+                border: '0.5px solid #333',
+                borderRadius: '6px',
+                color: '#e8e0d0',
                 fontSize: '13px',
-                lineHeight: 1.9,
-                color: '#888',
-                letterSpacing: '0.04em',
-                marginBottom: '12px',
-              }}>
-                {q.text}
-              </p>
-              <textarea
-                rows={3}
-                value={answers[q.key]}
-                onChange={(e) => setAnswers((prev) => ({ ...prev, [q.key]: e.target.value }))}
-                placeholder="ここに入力してください..."
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  fontSize: '13px',
-                  lineHeight: 1.8,
-                  color: '#e0ddd6',
-                  fontFamily: 'Noto Sans JP, sans-serif',
-                  border: '1px solid #2a2a2a',
-                  borderRadius: '6px',
-                  resize: 'vertical',
-                  outline: 'none',
-                  backgroundColor: '#0f0f0f',
-                  boxSizing: 'border-box',
-                  letterSpacing: '0.03em',
-                }}
-              />
-            </div>
+                lineHeight: 1.7,
+                padding: '10px 12px',
+                resize: 'vertical',
+                minHeight: '80px',
+                fontFamily: 'var(--font-noto-sans-jp), Noto Sans JP, sans-serif',
+                outline: 'none',
+                boxSizing: 'border-box',
+                letterSpacing: '0.03em',
+              }}
+            />
           </div>
         ))}
       </div>
 
       {/* Save button */}
-      <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+      <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center' }}>
         <button
           onClick={handleSave}
           style={{
-            padding: '12px 36px',
+            display: 'block',
+            width: '100%',
+            maxWidth: '240px',
+            padding: '12px 24px',
             backgroundColor: '#c9a84c',
             color: '#0a0a0a',
-            fontSize: '13px',
-            letterSpacing: '0.15em',
-            fontFamily: 'Noto Sans JP, sans-serif',
-            fontWeight: 500,
             border: 'none',
             borderRadius: '6px',
+            fontSize: '13px',
+            fontWeight: 500,
+            letterSpacing: '0.06em',
             cursor: 'pointer',
+            fontFamily: 'var(--font-noto-sans-jp), Noto Sans JP, sans-serif',
           }}
         >
           回答を保存する
@@ -150,7 +142,7 @@ export default function PreviewMonshinPage() {
           color: '#c9a84c',
           fontSize: '13px',
           letterSpacing: '0.1em',
-          fontFamily: 'Noto Sans JP, sans-serif',
+          fontFamily: 'var(--font-noto-sans-jp), Noto Sans JP, sans-serif',
           padding: '14px 24px',
           borderRadius: '8px',
           border: '1px solid rgba(201,168,76,0.3)',
