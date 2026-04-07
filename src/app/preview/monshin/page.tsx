@@ -28,7 +28,7 @@ export default function PreviewMonshinPage() {
   }
 
   return (
-    <PreviewShell activeItem="7要素診断">
+    <PreviewShell>
       {/* Page heading */}
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{

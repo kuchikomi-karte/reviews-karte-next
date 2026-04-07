@@ -43,7 +43,7 @@ function SecBadge({ children, red }: { children: React.ReactNode; red?: boolean 
 
 export default function PreviewKarteDemoPage() {
   return (
-    <PreviewShell activeItem="総評" showKarteMenu>
+    <PreviewShell showKarteMenu>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
         {/* ── 総評 HERO ─────────────────────────────────── */}
