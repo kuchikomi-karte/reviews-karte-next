@@ -64,6 +64,39 @@
   flex-shrink: 0;
 }
 
+.profileLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.avatar,
+.avatarFallback {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.avatar {
+  object-fit: cover;
+  object-position: center;
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  background: #1a1a1a;
+}
+
+.avatarFallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  background: #1a1a1a;
+  color: var(--kk-gold);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
 .link,
 .button {
   color: #aaa;

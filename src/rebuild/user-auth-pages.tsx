@@ -85,7 +85,7 @@ export function UserLoginPage() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/preview/karte-demo");
       router.refresh();
     } catch (authError) {
       console.error("[user-login] Unexpected password login error", {
@@ -337,7 +337,7 @@ export function UserRegisterPage() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/preview/karte-demo");
       router.refresh();
     } catch (authError) {
       console.error("[user-register] Unexpected email registration error", {

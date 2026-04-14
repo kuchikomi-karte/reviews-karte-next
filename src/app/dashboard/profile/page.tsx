@@ -1,10 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { UserShell } from "@/components/dashboard/UserShell";
+import {
+  clearStoredUserAvatar,
+  getStoredUserAvatar,
+  saveStoredUserAvatar,
+} from "@/lib/user-avatar";
 
 const PlacesSearch = dynamic(
   () => import("@/components/PlacesSearch").then((module) => module.PlacesSearch),
@@ -110,6 +115,7 @@ async function findProfileRow(
 
 export default function ProfilePage() {
   const initialDraft = getStoredDraft();
+  const [avatarPreview, setAvatarPreview] = useState("");
   const [salonName, setSalonName] = useState(initialDraft.salonName);
   const [businessType, setBusinessType] = useState<BusinessType>(
     initialDraft.businessType,
@@ -120,6 +126,10 @@ export default function ProfilePage() {
   const [statusMessage, setStatusMessage] = useState("");
   const [saving, setSaving] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setAvatarPreview(getStoredUserAvatar());
+  }, []);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -291,6 +301,47 @@ export default function ProfilePage() {
     }
   };
 
+  const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setStatusMessage("画像ファイルを選択してください。");
+      return;
+    }
+
+    if (file.size > 1024 * 1024) {
+      setStatusMessage("画像サイズは 1MB 以下にしてください。");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : "";
+      if (!result) {
+        setStatusMessage("画像の読み込みに失敗しました。");
+        return;
+      }
+
+      setAvatarPreview(result);
+      saveStoredUserAvatar(result);
+      setStatusMessage("プロフィール画像を更新しました。");
+    };
+    reader.onerror = () => {
+      setStatusMessage("画像の読み込みに失敗しました。");
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  };
+
+  const handleAvatarRemove = () => {
+    clearStoredUserAvatar();
+    setAvatarPreview("");
+    setStatusMessage("プロフィール画像を削除しました。");
+  };
+
   return (
     <UserShell
       eyebrow="Profile"
@@ -298,6 +349,76 @@ export default function ProfilePage() {
       description="口コミ活用に必要な店舗情報、Google口コミURL、その他の口コミサイトURLを登録します。"
     >
       <div style={{ display: "grid", gap: "24px" }}>
+        <section style={panelStyle}>
+          <label style={labelStyle}>プロフィール画像</label>
+          <div
+            style={{
+              display: "flex",
+              gap: "18px",
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            {avatarPreview ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={avatarPreview}
+                alt="プロフィール画像"
+                style={{
+                  width: "72px",
+                  height: "72px",
+                  borderRadius: "999px",
+                  objectFit: "cover",
+                  objectPosition: "center",
+                  border: "1px solid rgba(201,168,76,0.35)",
+                  backgroundColor: "#1a1a1a",
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: "72px",
+                  height: "72px",
+                  borderRadius: "999px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "1px solid rgba(201,168,76,0.35)",
+                  backgroundColor: "#1a1a1a",
+                  color: "#c9a84c",
+                  fontSize: "18px",
+                  letterSpacing: "0.1em",
+                }}
+              >
+                人
+              </div>
+            )}
+
+            <div style={{ display: "grid", gap: "10px" }}>
+              <label style={secondaryButtonStyle} htmlFor="avatar-upload-input">
+                画像をアップロード
+              </label>
+              <input
+                id="avatar-upload-input"
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                onChange={handleAvatarChange}
+                style={{ display: "none" }}
+              />
+              <button
+                onClick={handleAvatarRemove}
+                style={secondaryDangerButtonStyle}
+                type="button"
+              >
+                画像を削除
+              </button>
+              <p style={{ fontSize: "12px", color: "#666", margin: 0 }}>
+                PNG / JPEG / WebP、1MB 以下
+              </p>
+            </div>
+          </div>
+        </section>
+
         <section style={panelStyle}>
           <label style={labelStyle}>店舗名</label>
           <input
@@ -505,4 +626,15 @@ const secondaryButtonStyle = {
   fontWeight: 700,
   cursor: "pointer",
   color: "#0a0a0a",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  textDecoration: "none",
+} as const;
+
+const secondaryDangerButtonStyle = {
+  ...secondaryButtonStyle,
+  border: "1px solid #f0c5c5",
+  color: "#b64d4d",
+  backgroundColor: "#fff5f5",
 } as const;

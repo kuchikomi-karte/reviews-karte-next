@@ -10,6 +10,8 @@
   --kk-gold-border: rgba(201, 168, 76, 0.35);
   --kk-cream: #f5f0e8;
   --kk-border: #222;
+  --right-stepper-w: 260px;
+  --chat-panel-w: 360px;
 }
 
 @theme inline {
@@ -50,6 +52,149 @@ a {
   .preview-sidebar { display: none !important; }
   .preview-content { padding: 20px 14px 60px !important; }
   .preview-sec-body { padding: 14px !important; }
+}
+
+/* ── karte-demo スクロールバー ────────────── */
+.karte-body-wrap {
+  display: flex;
+  height: calc(100vh - 102px);
+  overflow: hidden;
+  position: relative;
+}
+
+.col-karte-main {
+  flex: 1;
+  min-width: 0;
+  padding: 28px 24px;
+  background: #f5f0e8;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 168, 76, 0.3) transparent;
+  transition: margin-right 0.3s ease;
+}
+.col-karte-main::-webkit-scrollbar { width: 4px; }
+.col-karte-main::-webkit-scrollbar-thumb {
+  background: rgba(201, 168, 76, 0.3);
+  border-radius: 2px;
+}
+.col-karte-main.chat-open {
+  margin-right: var(--chat-panel-w);
+}
+
+.col-stepper {
+  width: var(--right-stepper-w);
+  flex-shrink: 0;
+  background: #0f0f0f;
+  border-left: 0.5px solid #1e1e1e;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a2a transparent;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+}
+.col-stepper::-webkit-scrollbar { width: 3px; }
+.col-stepper::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 2px;
+}
+.col-stepper.chat-open {
+  transform: translateX(100%);
+  position: absolute;
+  right: 0;
+}
+
+.chat-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--chat-panel-w);
+  max-width: 100vw;
+  height: 100%;
+  background: #0a0a0a;
+  border-left: 0.5px solid #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 100;
+}
+.chat-panel.open {
+  transform: translateX(0);
+}
+
+.chat-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.chat-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (min-width: 769px) {
+  .chat-overlay {
+    display: none !important;
+  }
+}
+
+.karte-col-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201,168,76,0.3) transparent;
+}
+.karte-col-scroll::-webkit-scrollbar { width: 4px; }
+.karte-col-scroll::-webkit-scrollbar-track { background: transparent; }
+.karte-col-scroll::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 2px; }
+.karte-col-scroll::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.5); }
+
+.karte-nav-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a2a transparent;
+}
+.karte-nav-scroll::-webkit-scrollbar { width: 3px; }
+.karte-nav-scroll::-webkit-scrollbar-track { background: transparent; }
+.karte-nav-scroll::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+
+/* ── karte-demo レスポンシブ ──────────────── */
+@media (min-width: 769px) {
+  .mob-right { display: none !important; }
+}
+
+@media (max-width: 768px) {
+  .seira-bg-overlay { display: none !important; }
+  .col-nav-pc { display: none !important; }
+  .col-right-pc { display: none !important; }
+  .col-stepper { display: none !important; }
+  .mob-right { display: block; }
+  .karte-body-wrap {
+    height: auto !important;
+    overflow: visible !important;
+    flex-direction: column;
+  }
+  .karte-col-scroll {
+    height: auto !important;
+    overflow-y: visible !important;
+  }
+  .col-karte-main {
+    height: auto !important;
+    overflow-y: visible !important;
+  }
+  .col-karte-main.chat-open {
+    margin-right: 0;
+  }
+  .chat-panel {
+    position: fixed;
+    top: 102px;
+    width: 100vw;
+    height: calc(100vh - 102px);
+  }
 }
 
 /* textarea フォーカスリング（preview） */

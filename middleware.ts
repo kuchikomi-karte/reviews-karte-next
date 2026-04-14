@@ -5,13 +5,11 @@ import { handleUserMiddleware } from "@/rebuild/middleware/user";
 
 export async function middleware(request: NextRequest) {
   const adminResponse = handleAdminMiddleware(request);
-
   if (adminResponse) {
     return adminResponse;
   }
 
   const userResponse = await handleUserMiddleware(request);
-
   if (userResponse) {
     return userResponse;
   }
@@ -20,5 +18,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/premium", "/admin/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/premium",
+    "/admin/:path*",
+    "/preview/karte-demo/:path*",
+  ],
 };

@@ -1,0 +1,936 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>口コミ経営カルテ｜規約整備ドキュメント一式</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+
+  :root {
+    --black: #0a0a0a;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a3;
+    --cream: #f8f4ec;
+    --cream-dark: #ede8df;
+    --text: #1a1a1a;
+    --text-light: #555;
+    --border: #d4c9b0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  /* ── 印刷制御 ── */
+  @media print {
+    .tab-nav, .no-print { display: none !important; }
+    .tab-content { display: block !important; page-break-after: always; }
+    body { background: white; font-size: 11pt; }
+    .doc-header { background: white !important; border: 2px solid var(--gold); }
+  }
+
+  /* ── ヘッダー ── */
+  .site-header {
+    background: var(--black);
+    color: var(--gold);
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--gold);
+  }
+  .site-header .brand {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    letter-spacing: .1em;
+  }
+  .site-header .subtitle {
+    font-size: 11px;
+    color: var(--gold-light);
+    letter-spacing: .15em;
+    margin-top: 2px;
+  }
+  .badge {
+    background: var(--gold);
+    color: var(--black);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    letter-spacing: .1em;
+  }
+
+  /* ── タブナビ ── */
+  .tab-nav {
+    background: var(--black);
+    display: flex;
+    border-bottom: 1px solid #333;
+    padding: 0 40px;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: #777;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 12px;
+    padding: 14px 24px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    letter-spacing: .05em;
+    transition: all .2s;
+  }
+  .tab-btn:hover { color: var(--gold-light); }
+  .tab-btn.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  /* ── メインコンテンツ ── */
+  .main { max-width: 900px; margin: 0 auto; padding: 48px 40px; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── ドキュメントヘッダー ── */
+  .doc-header {
+    background: var(--black);
+    color: white;
+    padding: 36px 40px;
+    margin-bottom: 40px;
+    border-left: 4px solid var(--gold);
+  }
+  .doc-number {
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: .2em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .doc-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    margin-bottom: 8px;
+  }
+  .doc-meta {
+    font-size: 11px;
+    color: #999;
+    letter-spacing: .1em;
+  }
+
+  /* ── セクション ── */
+  .section {
+    margin-bottom: 48px;
+  }
+  .section-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--black);
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+    letter-spacing: .05em;
+  }
+  .section-title .num {
+    color: var(--gold);
+    margin-right: 8px;
+  }
+
+  /* ── テーブル ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+  th {
+    background: var(--black);
+    color: var(--gold);
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: .1em;
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.7;
+  }
+  tr:nth-child(even) td { background: var(--cream-dark); }
+  tr:last-child td { border-bottom: none; }
+
+  /* ── カード ── */
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--black);
+    margin-bottom: 8px;
+    letter-spacing: .05em;
+  }
+  .card p, .card li { font-size: 13px; color: var(--text-light); line-height: 1.8; }
+  .card ul { padding-left: 20px; }
+  .card li { margin-bottom: 4px; }
+
+  /* ── 警告・注意ボックス ── */
+  .alert {
+    background: #fff8e8;
+    border: 1px solid var(--gold);
+    border-left: 4px solid var(--gold);
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: #7a5c00;
+    line-height: 1.7;
+  }
+  .alert strong { display: block; margin-bottom: 4px; color: var(--black); }
+
+  .alert-red {
+    background: #fff2f2;
+    border-color: #c0392b;
+    color: #7a1010;
+  }
+
+  /* ── タイムライン ── */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 28px;
+  }
+  .tl-dot {
+    position: absolute;
+    left: -28px;
+    top: 4px;
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+  .tl-phase {
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: .15em;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .tl-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  .tl-body {
+    font-size: 13px;
+    color: var(--text-light);
+  }
+  .tl-body ul { padding-left: 18px; }
+  .tl-body li { margin-bottom: 3px; }
+
+  /* ── プロンプトボックス ── */
+  .prompt-box {
+    background: var(--black);
+    color: #e8e8e8;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    border-left: 3px solid var(--gold);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    position: relative;
+  }
+  .prompt-label {
+    position: absolute;
+    top: 10px; right: 12px;
+    font-size: 9px;
+    color: var(--gold);
+    letter-spacing: .2em;
+    font-weight: 600;
+  }
+  .prompt-box .highlight { color: var(--gold); font-weight: 600; }
+  .prompt-box .comment { color: #666; font-style: italic; }
+
+  /* ── コピーボタン ── */
+  .copy-btn {
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    padding: 8px 20px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity .2s;
+  }
+  .copy-btn:hover { opacity: .8; }
+
+  /* ── チェックリスト ── */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 8px 12px 8px 36px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before {
+    content: '□';
+    position: absolute;
+    left: 12px;
+    color: var(--gold);
+    font-size: 14px;
+  }
+
+  /* ── ステータスバッジ ── */
+  .status {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    letter-spacing: .05em;
+    margin-left: 8px;
+  }
+  .status-todo { background: #eee; color: #555; }
+  .status-wip { background: #fff3cd; color: #856404; }
+  .status-done { background: #d4edda; color: #155724; }
+  .status-block { background: #f8d7da; color: #721c24; }
+
+  /* ── フッター ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 0;
+    margin-top: 60px;
+    text-align: center;
+    font-size: 11px;
+    color: #999;
+    letter-spacing: .1em;
+  }
+</style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<header class="site-header">
+  <div>
+    <div class="brand">口コミ経営カルテ｜規約整備ドキュメント一式</div>
+    <div class="subtitle">ai×me lab — Internal Document</div>
+  </div>
+  <div class="badge">CONFIDENTIAL</div>
+</header>
+
+<!-- タブナビ -->
+<nav class="tab-nav no-print">
+  <button class="tab-btn active" onclick="switchTab('plan')">📋 計画書</button>
+  <button class="tab-btn" onclick="switchTab('guide')">📖 運用ガイド</button>
+  <button class="tab-btn" onclick="switchTab('prompt')">🤖 ロードマップ追記プロンプト</button>
+</nav>
+
+<main class="main">
+
+  <!-- ════════════════════════════════ TAB 1: 計画書 ════════════════════════════════ -->
+  <div id="tab-plan" class="tab-content active">
+
+    <div class="doc-header">
+      <div class="doc-number">DOCUMENT 01 / 03</div>
+      <div class="doc-title">利用規約 検討・策定 計画書</div>
+      <div class="doc-meta">口コミ経営カルテ｜ai×me lab　—　作成日：2026年3月</div>
+    </div>
+
+    <!-- 1. 目的 -->
+    <div class="section">
+      <div class="section-title"><span class="num">01</span>策定の目的と背景</div>
+      <div class="card">
+        <div class="card-title">なぜ規約が必要か</div>
+        <ul>
+          <li>本サービスは口コミ返信の<strong>提案・代行</strong>を行うものであり、経営成果（集客・売上・利益）を保証するものではない</li>
+          <li>サブスクリプション契約前に利用者がこの点を明確に理解・承諾した上で申し込む設計が必要</li>
+          <li>返金・解約・著作権・情報管理など、継続課金サービスとして必須の規定を整備する</li>
+          <li>特定商取引法に基づく表記をLPに掲載する義務がある（定期購入サービス）</li>
+        </ul>
+      </div>
+      <div class="alert">
+        <strong>⚠ 法的注意点</strong>
+        本ドキュメントはサービス設計の検討補助を目的としており、法的効力を保証するものではありません。最終的な規約文書は弁護士または法務専門家によるレビューを推奨します。
+      </div>
+    </div>
+
+    <!-- 2. 規約で定めるべき項目 -->
+    <div class="section">
+      <div class="section-title"><span class="num">02</span>規約で定めるべき項目一覧</div>
+      <table>
+        <tr><th>カテゴリ</th><th>具体的な検討事項</th><th>優先度</th></tr>
+        <tr>
+          <td><strong>サービス内容の定義</strong></td>
+          <td>提供する業務範囲（返信代行・提案・レポートの定義）、月20件の上限と超過時の取り扱い</td>
+          <td><span class="status status-block">最重要</span></td>
+        </tr>
+        <tr>
+          <td><strong>免責・保証の否定</strong></td>
+          <td>経営成果・集客数・売上・利益を保証しない旨の明記。提案はアドバイスであり結果に責任を負わない</td>
+          <td><span class="status status-block">最重要</span></td>
+        </tr>
+        <tr>
+          <td><strong>料金・決済</strong></td>
+          <td>月額¥9,800の継続課金、支払いサイクル、Stripeによる自動決済、税の扱い</td>
+          <td><span class="status status-block">最重要</span></td>
+        </tr>
+        <tr>
+          <td><strong>解約・返金</strong></td>
+          <td>解約申請の方法・期限（締め日）、日割り返金の有無、モニター期間終了後の扱い</td>
+          <td><span class="status status-block">最重要</span></td>
+        </tr>
+        <tr>
+          <td><strong>情報・著作権</strong></td>
+          <td>提供された口コミ情報の取り扱い、作成した返信文の著作権帰属、守秘義務</td>
+          <td><span class="status status-wip">重要</span></td>
+        </tr>
+        <tr>
+          <td><strong>禁止事項</strong></td>
+          <td>不正利用、第三者への転売・共有、虚偽情報の提供など</td>
+          <td><span class="status status-wip">重要</span></td>
+        </tr>
+        <tr>
+          <td><strong>個人情報保護</strong></td>
+          <td>店舗情報・顧客情報の取得範囲と管理方法（プライバシーポリシー別途）</td>
+          <td><span class="status status-wip">重要</span></td>
+        </tr>
+        <tr>
+          <td><strong>サービス変更・終了</strong></td>
+          <td>料金改定・内容変更・サービス終了時の通知方法と期間</td>
+          <td><span class="status status-todo">通常</span></td>
+        </tr>
+        <tr>
+          <td><strong>準拠法・管轄</strong></td>
+          <td>日本法準拠、管轄裁判所の指定</td>
+          <td><span class="status status-todo">通常</span></td>
+        </tr>
+        <tr>
+          <td><strong>特定商取引法</strong></td>
+          <td>事業者名・所在地・連絡先・役務の内容・対価・支払時期・役務提供期間</td>
+          <td><span class="status status-block">法的義務</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 3. 重点検討事項：免責条項 -->
+    <div class="section">
+      <div class="section-title"><span class="num">03</span>重点検討事項｜免責・保証否定条項</div>
+      <div class="alert">
+        <strong>このサービス固有のリスクポイント</strong>
+        「黒川聖羅の監修・アドバイス」という権威性を前面に出す設計のため、利用者が「黒川氏に相談すれば必ず結果が出る」と誤解するリスクがある。規約・LP・申込フローの全層で一貫した免責メッセージが必要。
+      </div>
+      <table>
+        <tr><th>検討ポイント</th><th>推奨する記載方針</th></tr>
+        <tr>
+          <td>経営成果の保証</td>
+          <td>「本サービスは口コミ返信の提案・代行を行うものであり、集客数・売上・利益等の経営成果を保証するものではありません」と明記</td>
+        </tr>
+        <tr>
+          <td>アドバイスの性質</td>
+          <td>「提供する返信文・アドバイスは参考情報であり、最終的な経営判断は利用者自身が行うものとします」</td>
+        </tr>
+        <tr>
+          <td>プラットフォーム依存</td>
+          <td>Google・HotPepperの仕様変更・規約変更により返信代行内容が制限される場合がある旨の記載</td>
+        </tr>
+        <tr>
+          <td>結果の個人差</td>
+          <td>「効果は店舗の状況・競合環境・口コミの内容等により異なり、一定の成果を約束するものではありません」</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 4. 承諾フロー設計 -->
+    <div class="section">
+      <div class="section-title"><span class="num">04</span>契約承諾フロー設計</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-phase">STEP 01</div>
+          <div class="tl-title">LP上の申し込みボタンをクリック</div>
+          <div class="tl-body">LPの申込CTAから専用申込ページへ遷移</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-phase">STEP 02</div>
+          <div class="tl-title">申込フォーム（店舗情報入力）</div>
+          <div class="tl-body">店舗名・担当者名・メールアドレス・プラン選択（TYPE A/B/C）</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-phase">STEP 03</div>
+          <div class="tl-title">規約確認ページ ← ここが重要</div>
+          <div class="tl-body">
+            <ul>
+              <li>利用規約全文をスクロール表示（縦スクロールが完了するまでチェック不可を検討）</li>
+              <li>☐「利用規約を読み、内容に同意します」</li>
+              <li>☐「本サービスは経営成果を保証するものではないことを理解しました」←<strong>免責専用チェック</strong></li>
+              <li>両方チェックしないと「決済へ進む」ボタンが非活性</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-phase">STEP 04</div>
+          <div class="tl-title">Stripe Checkoutへ遷移</div>
+          <div class="tl-body">Stripe側でもサービス名・金額・継続課金の説明を表示。Stripeの利用規約リンクをフッターに表示</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-phase">STEP 05</div>
+          <div class="tl-title">決済完了・自動メール送信</div>
+          <div class="tl-body">承諾日時・プランを記録したサンクスメール送信（証跡として保管）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. 策定スケジュール -->
+    <div class="section">
+      <div class="section-title"><span class="num">05</span>策定スケジュール（目安）</div>
+      <table>
+        <tr><th>フェーズ</th><th>作業内容</th><th>目安期間</th><th>担当</th></tr>
+        <tr>
+          <td>フェーズ1</td>
+          <td>本計画書をもとに規約項目の確定・方針決定</td>
+          <td>〜1週間</td>
+          <td>ai×me lab</td>
+        </tr>
+        <tr>
+          <td>フェーズ2</td>
+          <td>規約文案ドラフト作成（AIサポート活用可）</td>
+          <td>〜1週間</td>
+          <td>ai×me lab + Claude</td>
+        </tr>
+        <tr>
+          <td>フェーズ3</td>
+          <td>法務レビュー（弁護士・法務サービス）</td>
+          <td>〜2週間</td>
+          <td>外部専門家</td>
+        </tr>
+        <tr>
+          <td>フェーズ4</td>
+          <td>LP・申込フローへの実装（承諾チェック画面）</td>
+          <td>〜1週間</td>
+          <td>ai×me lab + Claude</td>
+        </tr>
+        <tr>
+          <td>フェーズ5</td>
+          <td>テスト・動作確認・Stripe連携確認</td>
+          <td>〜3日</td>
+          <td>ai×me lab</td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+  <!-- /tab-plan -->
+
+
+  <!-- ════════════════════════════════ TAB 2: 運用ガイド ════════════════════════════════ -->
+  <div id="tab-guide" class="tab-content">
+
+    <div class="doc-header">
+      <div class="doc-number">DOCUMENT 02 / 03</div>
+      <div class="doc-title">利用規約 運用ガイドライン</div>
+      <div class="doc-meta">口コミ経営カルテ｜ai×me lab　—　作成日：2026年3月</div>
+    </div>
+
+    <!-- 規約管理 -->
+    <div class="section">
+      <div class="section-title"><span class="num">01</span>規約の管理・更新ルール</div>
+      <div class="card">
+        <div class="card-title">バージョン管理</div>
+        <ul>
+          <li>規約には必ずバージョン番号と施行日を記載（例：ver.1.0 / 2026年◯月◯日施行）</li>
+          <li>過去バージョンはページ下部にアーカイブリンクを設置</li>
+          <li>変更時は既存会員にメールで事前通知（重要変更は30日前、軽微な変更は14日前）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">変更が必要になる主なケース</div>
+        <ul>
+          <li>料金改定・プラン変更</li>
+          <li>提供サービス内容の追加・削除</li>
+          <li>対応プラットフォームの変更（Google・HotPepper等）</li>
+          <li>法律・規制の改正への対応</li>
+          <li>Stripeの利用規約変更に伴う対応</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 承諾記録の管理 -->
+    <div class="section">
+      <div class="section-title"><span class="num">02</span>承諾記録の管理</div>
+      <div class="alert">
+        <strong>⚠ 重要：承諾の証跡を残す</strong>
+        「同意した・していない」のトラブルに備え、承諾日時・規約バージョン・メールアドレスを記録・保管する。
+      </div>
+      <table>
+        <tr><th>記録する情報</th><th>保管方法（推奨）</th></tr>
+        <tr>
+          <td>承諾日時（タイムスタンプ）</td>
+          <td>Stripeのメタデータ or バックエンドDB</td>
+        </tr>
+        <tr>
+          <td>承諾時の規約バージョン</td>
+          <td>Stripeのメタデータに規約ver.を付与</td>
+        </tr>
+        <tr>
+          <td>契約者メールアドレス</td>
+          <td>Stripe顧客情報 + 自社スプレッドシート</td>
+        </tr>
+        <tr>
+          <td>確認メール送信記録</td>
+          <td>Gmail送信ログ（aixme.karte@gmail.com）</td>
+        </tr>
+      </table>
+      <div class="card">
+        <div class="card-title">サンクスメールに含める内容（証跡として）</div>
+        <ul>
+          <li>申込日時・プラン名・料金</li>
+          <li>同意した利用規約のバージョンとURL</li>
+          <li>解約方法・連絡先</li>
+          <li>サービス開始日の案内</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 解約・返金フロー -->
+    <div class="section">
+      <div class="section-title"><span class="num">03</span>解約・返金フロー</div>
+      <table>
+        <tr><th>ケース</th><th>対応方針（検討案）</th></tr>
+        <tr>
+          <td>通常解約</td>
+          <td>月末締め翌月解約。月の途中解約は翌月分から停止（当月分は返金なし）</td>
+        </tr>
+        <tr>
+          <td>初月キャンセル（8日以内）</td>
+          <td>特定商取引法のクーリングオフ対象外（役務提供）だが、初回8日以内は全額返金対応を検討</td>
+        </tr>
+        <tr>
+          <td>サービス側の不履行</td>
+          <td>月20件を提供できなかった場合：未提供分の日割り返金（または翌月繰り越し）</td>
+        </tr>
+        <tr>
+          <td>モニター期間終了後</td>
+          <td>3ヶ月モニター終了後の継続意思確認メールを送付。返答なき場合の扱いを規約に明記</td>
+        </tr>
+      </table>
+      <div class="alert alert-red">
+        <strong>🚫 注意：定期購入サービスのクーリングオフ</strong>
+        継続的役務提供（サブスクリプション）は特定商取引法の「特定継続的役務提供」に該当する可能性があります。該当する場合、8日間のクーリングオフが法的に義務付けられます。専門家への確認を推奨します。
+      </div>
+    </div>
+
+    <!-- 特定商取引法表記 -->
+    <div class="section">
+      <div class="section-title"><span class="num">04</span>特定商取引法に基づく表記（LP掲載必須）</div>
+      <div class="card">
+        <div class="card-title">掲載が必要な項目</div>
+        <ul>
+          <li><strong>事業者名：</strong>ai×me lab（屋号）または代表者氏名</li>
+          <li><strong>所在地：</strong>（要記載 — 私書箱・バーチャルオフィス可）</li>
+          <li><strong>連絡先：</strong>aixme.karte@gmail.com</li>
+          <li><strong>役務の内容：</strong>口コミ返信代行・月次レポート・LINE相談</li>
+          <li><strong>対価：</strong>¥9,800/月（税込 or 税別を明記）</li>
+          <li><strong>支払時期・方法：</strong>月次自動決済（Stripe）</li>
+          <li><strong>役務提供期間：</strong>契約月から3ヶ月（モニター）/ 以降1ヶ月自動更新</li>
+          <li><strong>解約の方法：</strong>メールまたはLINEにて月末◯日までに申請</li>
+        </ul>
+      </div>
+      <div class="alert">
+        <strong>LP上の配置について</strong>
+        特商法表記はLP最下部にリンクを設置し、別ページまたはモーダルで全文表示するのが一般的。申込チェック画面にも「特定商取引法に基づく表記を確認しました」のチェックを追加することを推奨。
+      </div>
+    </div>
+
+    <!-- 運用チェックリスト -->
+    <div class="section">
+      <div class="section-title"><span class="num">05</span>月次運用チェックリスト</div>
+      <ul class="checklist">
+        <li>当月の返信代行件数（20件/顧客）の進捗確認</li>
+        <li>月次黒川レポートの作成・送付</li>
+        <li>Stripeの決済エラー・失敗件数の確認</li>
+        <li>解約申請の受付・処理</li>
+        <li>LINEからの問い合わせ・相談への対応</li>
+        <li>規約・特商法表記の変更要否の確認</li>
+        <li>モニター3ヶ月終了者への継続案内送付</li>
+      </ul>
+    </div>
+
+  </div>
+  <!-- /tab-guide -->
+
+
+  <!-- ════════════════════════════════ TAB 3: プロンプト ════════════════════════════════ -->
+  <div id="tab-prompt" class="tab-content">
+
+    <div class="doc-header">
+      <div class="doc-number">DOCUMENT 03 / 03</div>
+      <div class="doc-title">ロードマップ追記指示プロンプト</div>
+      <div class="doc-meta">Claudeへの引き継ぎ用プロンプト集｜コピーして使用してください</div>
+    </div>
+
+    <div class="alert">
+      <strong>使い方</strong>
+      以下のプロンプトをClaudeの新しいチャットにコピー&ペーストして使用してください。既存の引き継ぎプロンプトに続けて貼り付けることを推奨します。
+    </div>
+
+    <!-- プロンプト1 -->
+    <div class="section">
+      <div class="section-title"><span class="num">01</span>ロードマップへの規約整備フェーズ追記</div>
+      <div class="prompt-box">
+        <span class="prompt-label">PROMPT</span>
+<span class="highlight">【ロードマップ追記指示】</span>
+
+口コミ経営カルテのプロジェクトロードマップに、以下の「規約整備フェーズ」を追記してください。
+
+<span class="highlight">## 追記内容：規約整備フェーズ（Stripe決済実装前に完了必須）</span>
+
+<span class="comment">### フェーズ定義</span>
+既存ロードマップの「Stripe決済実装」の前工程として「規約整備フェーズ」を挿入する。
+決済フローには利用規約の承諾チェックが必要なため、規約が未完成の状態でStripeを実装することはできない。
+
+<span class="comment">### タスク一覧</span>
+1. 利用規約ドラフト作成
+   - 免責・保証否定条項（経営成果を保証しない旨）
+   - サービス内容の定義（月20件・月次レポート・LINE相談）
+   - 料金・解約・返金ポリシー
+   - 情報管理・著作権・禁止事項
+   - 準拠法・管轄
+
+2. 特定商取引法に基づく表記の作成
+   - 事業者情報・連絡先・役務内容・対価・支払方法・解約方法
+
+3. 申込フローへの承諾チェック実装
+   - チェック1：「利用規約に同意する」
+   - チェック2：「本サービスは経営成果を保証しないことを理解した」（免責専用）
+   - 両チェックなしでは決済ボタン非活性
+
+4. 法務レビュー（推奨）
+
+<span class="comment">### 完了条件</span>
+- 規約ページがLP上でアクセス可能な状態
+- 承諾チェック画面が実装済み
+- 特商法表記がLPフッターに掲載済み
+- Stripe実装前にこれらが全て完了していること
+
+以上をロードマップのフェーズとして整理・更新してください。</div>
+      <button class="copy-btn no-print" onclick="copyText(this, 'prompt1')">コピー</button>
+      <textarea id="prompt1" style="position:absolute;left:-9999px;" readonly>【ロードマップ追記指示】
+
+口コミ経営カルテのプロジェクトロードマップに、以下の「規約整備フェーズ」を追記してください。
+
+## 追記内容：規約整備フェーズ（Stripe決済実装前に完了必須）
+
+### フェーズ定義
+既存ロードマップの「Stripe決済実装」の前工程として「規約整備フェーズ」を挿入する。
+決済フローには利用規約の承諾チェックが必要なため、規約が未完成の状態でStripeを実装することはできない。
+
+### タスク一覧
+1. 利用規約ドラフト作成
+   - 免責・保証否定条項（経営成果を保証しない旨）
+   - サービス内容の定義（月20件・月次レポート・LINE相談）
+   - 料金・解約・返金ポリシー
+   - 情報管理・著作権・禁止事項
+   - 準拠法・管轄
+
+2. 特定商取引法に基づく表記の作成
+   - 事業者情報・連絡先・役務内容・対価・支払方法・解約方法
+
+3. 申込フローへの承諾チェック実装
+   - チェック1：「利用規約に同意する」
+   - チェック2：「本サービスは経営成果を保証しないことを理解した」（免責専用）
+   - 両チェックなしでは決済ボタン非活性
+
+4. 法務レビュー（推奨）
+
+### 完了条件
+- 規約ページがLP上でアクセス可能な状態
+- 承諾チェック画面が実装済み
+- 特商法表記がLPフッターに掲載済み
+- Stripe実装前にこれらが全て完了していること
+
+以上をロードマップのフェーズとして整理・更新してください。</textarea>
+    </div>
+
+    <!-- プロンプト2 -->
+    <div class="section">
+      <div class="section-title"><span class="num">02</span>利用規約ドラフト作成依頼</div>
+      <div class="prompt-box">
+        <span class="prompt-label">PROMPT</span>
+<span class="highlight">【利用規約ドラフト作成依頼】</span>
+
+以下の条件で「口コミ経営カルテ」の利用規約ドラフトを作成してください。
+
+<span class="comment">## サービス概要</span>
+- サービス名：口コミ経営カルテ
+- 運営：ai×me lab
+- 内容：美容サロン向け口コミ返信代行・月次レポート・LINE相談
+- 料金：¥9,800/月（モニター価格・3ヶ月）
+- 決済：Stripeによる月次自動課金
+
+<span class="comment">## 必ず含める条項</span>
+1. 免責条項（最重要）
+   「本サービスは経営成果（集客・売上・利益）を保証しない。提供する返信文・アドバイスは参考情報であり、経営判断は利用者自身が行う」
+   
+2. サービス内容の定義と上限
+   月20件の返信代行、超過時の扱い
+
+3. 解約・返金ポリシー
+   月末締め翌月解約、クーリングオフへの言及
+
+4. 著作権・情報管理
+   提供された口コミ情報の取り扱い、作成した返信文の著作権
+
+5. 特定商取引法に基づく表記（別セクションで作成）
+
+<span class="comment">## トーン・形式</span>
+- 日本語、です・ます調
+- 一般の美容サロンオーナーが読んで理解できる平易な文体
+- 法的に必要な厳密さは保ちつつ、難解な法律用語は最小限に
+
+ドラフトを作成した上で、法務レビューが必要な箇所にコメントを付けてください。</div>
+      <button class="copy-btn no-print" onclick="copyText(this, 'prompt2')">コピー</button>
+      <textarea id="prompt2" style="position:absolute;left:-9999px;" readonly>【利用規約ドラフト作成依頼】
+
+以下の条件で「口コミ経営カルテ」の利用規約ドラフトを作成してください。
+
+## サービス概要
+- サービス名：口コミ経営カルテ
+- 運営：ai×me lab
+- 内容：美容サロン向け口コミ返信代行・月次レポート・LINE相談
+- 料金：¥9,800/月（モニター価格・3ヶ月）
+- 決済：Stripeによる月次自動課金
+
+## 必ず含める条項
+1. 免責条項（最重要）
+   「本サービスは経営成果（集客・売上・利益）を保証しない。提供する返信文・アドバイスは参考情報であり、経営判断は利用者自身が行う」
+   
+2. サービス内容の定義と上限
+   月20件の返信代行、超過時の扱い
+
+3. 解約・返金ポリシー
+   月末締め翌月解約、クーリングオフへの言及
+
+4. 著作権・情報管理
+   提供された口コミ情報の取り扱い、作成した返信文の著作権
+
+5. 特定商取引法に基づく表記（別セクションで作成）
+
+## トーン・形式
+- 日本語、です・ます調
+- 一般の美容サロンオーナーが読んで理解できる平易な文体
+- 法的に必要な厳密さは保ちつつ、難解な法律用語は最小限に
+
+ドラフトを作成した上で、法務レビューが必要な箇所にコメントを付けてください。</textarea>
+    </div>
+
+    <!-- プロンプト3 -->
+    <div class="section">
+      <div class="section-title"><span class="num">03</span>承諾チェック画面のHTML実装依頼</div>
+      <div class="prompt-box">
+        <span class="prompt-label">PROMPT</span>
+<span class="highlight">【承諾チェック画面の実装依頼】</span>
+
+口コミ経営カルテのLP（口コミ経営カルテ_LP.html）に組み込む、
+利用規約承諾チェック画面のHTMLを作成してください。
+
+<span class="comment">## 要件</span>
+- デザイン：既存LPと同じ（黒・金・クリーム、日本語セリフ体、編集デザイン調）
+- モーダルまたは別セクションとして実装
+
+<span class="comment">## 機能要件</span>
+1. 利用規約の全文表示エリア（スクロール可能、高さ固定）
+2. チェックボックス1：「利用規約を読み、内容に同意します」
+3. チェックボックス2：「本サービスは経営成果（集客・売上・利益等）を保証するものではないことを理解しました」
+4. 両チェックが入っていない限り「決済へ進む」ボタンは非活性（disabled + グレーアウト）
+5. 両チェック完了後にボタンがアクティブ化 → クリックでStripe URLへ遷移（URLはプレースホルダー）
+
+<span class="comment">## 追加要件</span>
+- 特定商取引法に基づく表記へのリンクも同画面に設置
+- スマートフォン対応（レスポンシブ）
+
+既存LPのデザインシステムに合わせて実装してください。</div>
+      <button class="copy-btn no-print" onclick="copyText(this, 'prompt3')">コピー</button>
+      <textarea id="prompt3" style="position:absolute;left:-9999px;" readonly>【承諾チェック画面の実装依頼】
+
+口コミ経営カルテのLP（口コミ経営カルテ_LP.html）に組み込む、
+利用規約承諾チェック画面のHTMLを作成してください。
+
+## 要件
+- デザイン：既存LPと同じ（黒・金・クリーム、日本語セリフ体、編集デザイン調）
+- モーダルまたは別セクションとして実装
+
+## 機能要件
+1. 利用規約の全文表示エリア（スクロール可能、高さ固定）
+2. チェックボックス1：「利用規約を読み、内容に同意します」
+3. チェックボックス2：「本サービスは経営成果（集客・売上・利益等）を保証するものではないことを理解しました」
+4. 両チェックが入っていない限り「決済へ進む」ボタンは非活性（disabled + グレーアウト）
+5. 両チェック完了後にボタンがアクティブ化 → クリックでStripe URLへ遷移（URLはプレースホルダー）
+
+## 追加要件
+- 特定商取引法に基づく表記へのリンクも同画面に設置
+- スマートフォン対応（レスポンシブ）
+
+既存LPのデザインシステムに合わせて実装してください。</textarea>
+    </div>
+
+  </div>
+  <!-- /tab-prompt -->
+
+  <div class="footer">
+    口コミ経営カルテ｜規約整備ドキュメント一式　© ai×me lab — 監修｜黒川聖羅
+  </div>
+
+</main>
+
+<script>
+  function switchTab(name) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function copyText(btn, id) {
+    const text = document.getElementById(id).value;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ コピーしました';
+      setTimeout(() => btn.textContent = 'コピー', 2000);
+    });
+  }
+</script>
+
+</body>
+</html>
