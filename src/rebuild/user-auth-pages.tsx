@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import {
   getAuthFailureMessage,
@@ -10,6 +9,7 @@ import {
   toLoggableAuthError,
 } from "@/lib/auth/user";
 import { getAuthCallbackUrl } from "@/lib/site-url";
+import { createClient } from "@/lib/supabase/client";
 import { SiteHeader } from "@/rebuild/site-header";
 
 const inputStyle = {
@@ -71,7 +71,7 @@ export function UserLoginPage() {
     setLoading(true);
 
     try {
-      const supabase = createClientComponentClient();
+      const supabase = createClient();
       const { error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -109,7 +109,7 @@ export function UserLoginPage() {
     setError("");
 
     try {
-      const supabase = createClientComponentClient();
+      const supabase = createClient();
       const { data, error: authError } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: getAuthCallbackUrl({ flow: "login" }) },
@@ -326,7 +326,7 @@ export function UserRegisterPage() {
     setLoading(true);
 
     try {
-      const supabase = createClientComponentClient();
+      const supabase = createClient();
       const { error: authError } = await supabase.auth.signUp({ email, password });
 
       if (authError) {
@@ -366,7 +366,7 @@ export function UserRegisterPage() {
     setError("");
 
     try {
-      const supabase = createClientComponentClient();
+      const supabase = createClient();
       const { data, error: authError } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: getAuthCallbackUrl({ flow: "register" }) },
